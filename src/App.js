@@ -5,7 +5,8 @@ class App {
   constructor(rootElement, playerId) {
     this.client = Client({
       game: Game,
-      multiplayer: SocketIO({ server: 'localhost:8000' }),
+      // multiplayer: SocketIO({ server: 'localhost:8000' }),
+      multiplayer: SocketIO({ server: 'https://dominoops.herokuapp.com/' }),
       playerID: playerId
     });
     this.client.start();
