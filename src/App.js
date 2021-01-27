@@ -1,8 +1,13 @@
+import { SocketIO } from 'boardgame.io/multiplayer'
 import { Client } from 'boardgame.io/client';
 import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
 class App {
-  constructor(rootElement) {
-    this.client = Client({ game: Game });
+  constructor(rootElement, playerId) {
+    this.client = Client({
+      game: Game,
+      multiplayer: SocketIO({ server: 'localhost:8000' }),
+      playerID: playerId
+    });
     this.client.start();
     this.client.subscribe(state => this.update(state));
 
@@ -45,6 +50,8 @@ class App {
   }
 
   update(state) {
+    if (state === null) return;
+
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     if (cellElems.length > 0) {
       for (let y = 0; y < BOARD_HEIGHT; y++) {
@@ -58,6 +65,10 @@ class App {
         }
       }
     }
+
+    let elem = document.createElement('p');
+    elem.innerText = 'current player: ' + state.ctx.currentPlayer;
+    document.getElementById('app').appendChild(elem);
   }
 
   // TODO: optimize
@@ -97,5 +108,9 @@ class App {
   }
 }
 
+let url = new URL(location.href);
+let playerId = url.searchParams.get("player") || null;
+console.log('playerId: ', playerId);
+
 const appElement = document.getElementById('app');
-const app = new App(appElement);
+const app = new App(appElement, playerId);

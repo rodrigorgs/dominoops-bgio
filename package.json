@@ -1,17 +1,19 @@
 {
-  "name": "bgio-tutorial",
+  "name": "dominoops-bgio",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel index.html --open"
+    "start": "parcel index.html --open",
+    "serve": "node -r esm src/server.js"
   },
   "browserslist": "> 0.4% and not ie 11",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "boardgame.io": "^0.43.2"
+    "boardgame.io": "^0.43.2",
+    "esm": "^3.2.25"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
