@@ -1,6 +1,5 @@
 import { Client } from 'boardgame.io/client';
-import { Game } from './Game';
-
+import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
 class App {
   constructor(rootElement) {
     this.client = Client({ game: Game });
@@ -14,10 +13,10 @@ class App {
 
   createBoard() {
     const rows = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < BOARD_HEIGHT; i++) {
       const cells = [];
-      for (let j = 0; j < 3; j++) {
-        const id = 3 * i + j;
+      for (let j = 0; j < BOARD_WIDTH; j++) {
+        const id = BOARD_WIDTH * i + j;
         cells.push(`<td class="cell" data-id="${id}"></td>`);
       }
       rows.push(`<tr>${cells.join('')}</tr>`);
@@ -48,13 +47,53 @@ class App {
   update(state) {
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     if (cellElems.length > 0) {
-      for (let y = 0; y < 3; y++) {
-        for (let x = 0; x < 3; x++) {
-          const index = x + (y * 3);
-          cellElems[index].innerHTML = state.G.cells[index];
+      for (let y = 0; y < BOARD_HEIGHT; y++) {
+        for (let x = 0; x < BOARD_WIDTH; x++) {
+          const index = x + (y * BOARD_WIDTH);
+          const id = state.G.cells[index];
+          // cellElems[index].innerHTML = id;
+          if (id !== null) {
+            this.putCard(id * 10, x, y);
+          }
         }
       }
     }
+  }
+
+  // TODO: optimize
+  putCard(id, x, y) {
+    const image = this.getCardImageFromDeck(id);
+    const index = x + (y * BOARD_WIDTH);
+    const cellElems = Array.from(document.querySelectorAll('.cell'));
+
+    const imageElem = document.createElement('img');
+    imageElem.src = image;
+    cellElems[index].innerHTML = '';
+    if (id !== null) {
+      cellElems[index].appendChild(imageElem);
+    }
+  }
+
+  getCardImageFromDeck(id) {
+    const CARD_INPUT_SIZE = 400;
+    const CARD_OUTPUT_SIZE = 100;
+
+    let deck = document.getElementById('deck');
+
+    let canvas = document.createElement('canvas');
+    canvas.width = CARD_OUTPUT_SIZE;
+    canvas.height = CARD_OUTPUT_SIZE;
+    let ctx = canvas.getContext('2d');
+    
+    const y = Math.floor(id / 10);
+    const x = id % 10;
+    ctx.beginPath();
+    ctx.drawImage(deck, x * CARD_INPUT_SIZE, y * CARD_INPUT_SIZE, CARD_INPUT_SIZE, CARD_INPUT_SIZE, 0, 0, CARD_OUTPUT_SIZE, CARD_OUTPUT_SIZE);
+    ctx.fill();
+
+    let croppedImage = canvas.toDataURL('image/png');
+
+    return croppedImage;
   }
 }
 
