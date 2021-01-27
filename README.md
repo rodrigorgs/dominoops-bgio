@@ -21,4 +21,4 @@ Execute o servidor localmente:
 
     npm run serve
 
-Altere o arquivo `src/App.js` para usar o servidor local. Para isso, altere o valor da constante `SERVER` para `'localhost:8000'`.
+Altere o arquivo `src/config.js` para usar o servidor local. Para isso, altere o valor da constante `SERVER` para `'localhost:8000'`.
