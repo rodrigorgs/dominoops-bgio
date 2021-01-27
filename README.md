@@ -6,15 +6,17 @@
 
 ## Para executar
 
-Para executar o servidor:
-
-    npm run serve
-
-
-Para executar o cliente (rode em outro terminal):
-
     npm start
 
+Atualmente está sendo usado o servidor hospedado em https://dominoops.herokuapp.com/
 ## Para jogar
 
 Na janela do navegador que se abre, adicione `?player=0` ao final da URL. Abra outra aba no mesmo endereço, exceto trocando `0` por `1`. Jogue alternadamente na aba do jogador 0 e do jogador 1.
+
+## Para desenvolver o servidor
+
+Execute o servidor localmente:
+
+    npm run serve
+
+Altere o arquivo `src/App.js` para usar o servidor local. Para isso, altere o valor da constante `SERVER` para `'localhost:8000'`.

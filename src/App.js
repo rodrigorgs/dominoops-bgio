@@ -1,12 +1,14 @@
 import { SocketIO } from 'boardgame.io/multiplayer'
 import { Client } from 'boardgame.io/client';
 import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
+
+// const SERVER = 'localhost:8000';
+const SERVER = 'https://dominoops.herokuapp.com/';
 class App {
   constructor(rootElement, playerId) {
     this.client = Client({
       game: Game,
-      // multiplayer: SocketIO({ server: 'localhost:8000' }),
-      multiplayer: SocketIO({ server: 'https://dominoops.herokuapp.com/' }),
+      multiplayer: SocketIO({ server: SERVER }),
       playerID: playerId
     });
     this.client.start();
