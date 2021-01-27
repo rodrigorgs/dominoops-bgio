@@ -1,0 +1,19 @@
+{
+  "name": "bgio-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html --open"
+  },
+  "browserslist": "> 0.4% and not ie 11",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "boardgame.io": "^0.43.2"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
