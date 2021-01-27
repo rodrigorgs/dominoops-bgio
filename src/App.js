@@ -67,9 +67,12 @@ class App {
       }
     }
 
-    let elem = document.createElement('p');
-    elem.innerText = 'current player: ' + state.ctx.currentPlayer;
-    document.getElementById('app').appendChild(elem);
+    let elem = document.getElementById('msg');
+    if (state.ctx.currentPlayer == this.client.playerID) {
+      elem.innerText = "It's your turn!";
+    } else {
+      elem.innerText = `Wait, it's player ${state.ctx.currentPlayer}'s turn.`;
+    }
   }
 
   // TODO: optimize
