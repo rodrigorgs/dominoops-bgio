@@ -13,6 +13,8 @@ Atualmente está sendo usado o servidor hospedado em https://dominoops.herokuapp
 
 Na janela do navegador que se abre, adicione `?player=0` ao final da URL. Abra outra aba no mesmo endereço, exceto trocando `0` por `1`. Jogue alternadamente na aba do jogador 0 e do jogador 1.
 
+Você pode escolher uma sala de jogo através do parâmetro `match` da URL. Exemplo: `?player=0&match=sala1`.
+
 ## Para desenvolver o servidor
 
 Execute o servidor localmente:

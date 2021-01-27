@@ -1,15 +1,15 @@
 import { SocketIO } from 'boardgame.io/multiplayer'
 import { Client } from 'boardgame.io/client';
 import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
+import { SERVER } from './config';
 
-// const SERVER = 'localhost:8000';
-const SERVER = 'https://dominoops.herokuapp.com/';
 class App {
-  constructor(rootElement, playerId) {
+  constructor(rootElement, playerId, matchId) {
     this.client = Client({
       game: Game,
       multiplayer: SocketIO({ server: SERVER }),
-      playerID: playerId
+      playerID: playerId,
+      matchID: matchId
     });
     this.client.start();
     this.client.subscribe(state => this.update(state));
@@ -116,7 +116,9 @@ class App {
 
 let url = new URL(location.href);
 let playerId = url.searchParams.get("player") || null;
+let matchId = url.searchParams.get("match") || "default";
 console.log('playerId: ', playerId);
+console.log('matchId: ', matchId);
 
 const appElement = document.getElementById('app');
-const app = new App(appElement, playerId);
+const app = new App(appElement, playerId, matchId);
