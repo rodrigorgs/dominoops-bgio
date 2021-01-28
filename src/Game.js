@@ -36,12 +36,25 @@ export const Game = {
       }
     },
 
+    // TODO: rename
     clickCell: (G, ctx, id) => {
       if (G.cells[id] !== null) {
         return INVALID_MOVE;
       }
       G.cells[id] = G.players[ctx.currentPlayer].pop();
       ctx.events.endTurn();
+    },
+
+    endTurn: (G, ctx) => {
+      ctx.events.endTurn();
+    },
+
+    drawCard: (G, ctx) => {
+      if (G.deck.length === 0) {
+        return;
+      }
+
+      G.players[ctx.currentPlayer].push(G.deck.pop());
     },
 
     shuffleDeck: (G, ctx) => {
