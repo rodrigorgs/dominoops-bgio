@@ -60,9 +60,7 @@ class App {
     });
   }
 
-  update(state) {
-    if (state === null) return;
-
+  updateBoard(state) {
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     if (cellElems.length > 0) {
       for (let y = 0; y < BOARD_HEIGHT; y++) {
@@ -76,7 +74,9 @@ class App {
         }
       }
     }
+  }
 
+  updateMessage(state) {
     let elem = document.getElementById('msg');
     elem.innerHTML = `Hold Alt and drag to move board; Hold Alt and use mouse wheel to zoom
       <br>Match ID: <b><tt>${this.client.matchID}</tt></b> &mdash;
@@ -86,6 +86,29 @@ class App {
     } else {
       elem.innerHTML += `Wait, it's player ${state.ctx.currentPlayer}'s turn.`;
     }
+  }
+
+  // TODO: create separate classes
+  updateHand(state) {
+    const handElem = document.getElementById('hand');
+    handElem.innerHTML = '';
+    const cardIds = state.G.players[this.client.playerID];
+
+    cardIds.forEach(cardId => {
+      console.log(cardId);
+      const imageElem = document.createElement('img');
+      imageElem.src = this.getCardImageFromDeck(cardId);
+  
+      handElem.appendChild(imageElem);
+    });
+  }
+
+  update(state) {
+    if (state === null) return;
+
+    this.updateBoard(state);
+    this.updateMessage(state);
+    this.updateHand(state);
   }
 
   // TODO: optimize
