@@ -78,7 +78,8 @@ class App {
 
     let elem = document.getElementById('msg');
     elem.innerHTML = `Hold Alt and drag to move board; Hold Alt and use mouse wheel to zoom
-      <br>Match ID: <b><tt>${this.client.matchID}</tt></b> &mdash; `;
+      <br>Match ID: <b><tt>${this.client.matchID}</tt></b> &mdash;
+      <br>You have ${state.G.players[state.ctx.currentPlayer].length} cards.`;
     if (state.ctx.currentPlayer == this.client.playerID) {
       elem.innerHTML += "It's your turn!";
     } else {
