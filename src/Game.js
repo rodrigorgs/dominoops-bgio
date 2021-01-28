@@ -1,4 +1,5 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
+import { Card } from './Card';
 import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from './config';
 
 export const Game = {
@@ -7,20 +8,18 @@ export const Game = {
   setup: (ctx) => {
     const G = {
       cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null),
-      players: {
-        '0': []
-      },
+      players: {},
       deck: [...Array(NUM_CARDS).keys()],
       started: false
     }
 
+    // shuffle deck
     G.deck = ctx.random.Shuffle(G.deck);
-    // copies player 0 initial state to other players
-    for (let i = 1; i < ctx.numPlayers; i++) {
-      G.players[`${i}`] = JSON.parse(JSON.stringify(G.players['0']));
-    }
+    G.deck = G.deck.map(id => new Card(id, ctx.random.D4()));
+    
     // draw cards to players
     for (let i = 0; i < ctx.numPlayers; i++) {
+      G.players[`${i}`] = [];
       for (let n = 0; n < CARDS_PER_HAND; n++) {
         G.players[`${i}`].push(G.deck.pop());
       }

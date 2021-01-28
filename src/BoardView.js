@@ -44,10 +44,12 @@ export class BoardView {
   update(state) {
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     cellElems.forEach((cell, index) => {
-      const id = state.G.cells[index];
+      const card = state.G.cells[index];
       cell.innerHTML = '';
-      if (id !== null) {
-        cell.appendChild(this.deck.getCardImageElem(id));
+      if (card !== null) {
+        const elem = this.deck.getCardImageElem(card.id);
+        elem.style.transform = `rotate(${card.rotation * 90}deg)`;
+        cell.appendChild(elem);
       }
     });
   }

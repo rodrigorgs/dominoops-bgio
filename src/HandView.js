@@ -9,13 +9,16 @@ export class HandView {
     if (state === null) {
         return;
     }
-    
+
     this.rootElement.innerHTML = '';
     // TODO: refactor to avoid acessing state directly
-    const cardIds = state.G.players[playerID];
+    const cards = state.G.players[playerID];
 
-    cardIds.forEach(cardId => {
-      this.rootElement.appendChild(this.deck.getCardImageElem(cardId));
+    cards.forEach(card => {
+      const elem = this.deck.getCardImageElem(card.id);
+      elem.style.transform = `rotate(${card.rotation * 90}deg)`;
+      
+      this.rootElement.appendChild(elem);
       this.rootElement.appendChild(document.createElement('span'));
     });
   } 
