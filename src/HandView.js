@@ -1,3 +1,5 @@
+import { getClientCards } from "./utils";
+
 export class HandView {
   constructor(rootElement, client, deck) {
     this.rootElement = rootElement;
@@ -15,18 +17,13 @@ export class HandView {
     }
   }
 
-  getCards(state) {
-    // TODO: refactor to avoid acessing state directly
-    return state.G.players[this.client.playerID];
-  }
-
   update(state) {
     if (state === null) {
         return;
     }
 
     this.rootElement.innerHTML = '';
-    this.getCards(state).forEach(card => {
+    getClientCards(this.client).forEach(card => {
       const elem = this.deck.getCardImageElem(card.id);
       elem.style.transform = `rotate(${card.rotation * 90}deg)`;
 

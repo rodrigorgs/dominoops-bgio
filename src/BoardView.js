@@ -1,4 +1,5 @@
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./config";
+import { getCardAtBoardIndex } from "./utils";
 
 export class BoardView {
   constructor(rootElement, client, deck) {
@@ -44,7 +45,7 @@ export class BoardView {
   update(state) {
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     cellElems.forEach((cell, index) => {
-      const card = state.G.cells[index];
+      const card = getCardAtBoardIndex(this.client, index);
       cell.innerHTML = '';
       if (card !== null) {
         const elem = this.deck.getCardImageElem(card.id);
