@@ -1,1 +1,1 @@
-web: parcel build && node -r esm src/server.js
+web: node -r esm src/server.js
