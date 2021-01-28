@@ -1,8 +1,17 @@
+function appendNewTag(rootElement, tagname, text) {
+    const elem = document.createElement(tagname);
+    if (text !== undefined) {
+      elem.innerText = text;
+    }
+    rootElement.appendChild(elem);
+}
+
 export function SplashScreen(rootElement) {
     return new Promise(resolve => {
-      const txt = document.createElement('span');
-      txt.innerText = 'Number of players: ';
-      rootElement.appendChild(txt);
+      let elem;
+
+      appendNewTag(rootElement, 'h1', 'Create room (host a game)');
+      appendNewTag(rootElement, 'span', 'Number of players: ');
   
       const numPlayers = document.createElement('input');
       numPlayers.type = 'text';
@@ -17,6 +26,9 @@ export function SplashScreen(rootElement) {
   
       rootElement.appendChild(document.createElement('hr'));
   
+      appendNewTag(rootElement, 'h1', 'Join an existing room');
+      appendNewTag(rootElement, 'span', 'Match ID: ');
+
       const joinField = document.createElement('input');
       joinField.id = 'room-name';
       joinField.type = 'text';
