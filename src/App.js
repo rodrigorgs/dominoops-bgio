@@ -1,13 +1,14 @@
 import { SocketIO } from 'boardgame.io/multiplayer'
 import { Client } from 'boardgame.io/client';
 import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
-import { SERVER } from './config';
 
+const { protocol, hostname, port } = window.location;
+const server = `${protocol}//${hostname}:${port}`;
 class App {
   constructor(rootElement, playerId, matchId) {
     this.client = Client({
       game: Game,
-      multiplayer: SocketIO({ server: SERVER }),
+      multiplayer: SocketIO({ server }),
       playerID: playerId,
       matchID: matchId
     });
