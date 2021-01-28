@@ -28,6 +28,14 @@ export const Game = {
   },
 
   moves: {
+    rotateLastCardInHand: (G, ctx, amount) => {
+      const cards = G.players[ctx.currentPlayer];
+      if (cards.length > 0) {
+        const card = cards[cards.length - 1];
+        card.rotation = (card.rotation + 4 + amount) % 4;
+      }
+    },
+
     clickCell: (G, ctx, id) => {
       if (G.cells[id] !== null) {
         return INVALID_MOVE;

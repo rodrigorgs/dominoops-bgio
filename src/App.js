@@ -27,7 +27,7 @@ class App {
     this.rootElement = rootElement;
 
     this.deck = new Deck(document.getElementById('deck'), NUM_CARDS, CARD_WIDTH, CARD_HEIGHT, DECK_N_COLUMNS);
-    this.handView = new HandView(document.getElementById('hand'), this.deck);
+    this.handView = new HandView(document.getElementById('hand'), this.client, this.deck);
     this.boardView = new BoardView(document.getElementById('app'), this.client, this.deck);
     this.messageView = new MessageView(document.getElementById('msg'), this.client);
   }
@@ -37,7 +37,7 @@ class App {
 
     this.messageView.update(state);
     this.boardView.update(state);
-    this.handView.update(state, this.client.playerID);
+    this.handView.update(state);
   }
 }
 

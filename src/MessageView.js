@@ -5,9 +5,10 @@ export class MessageView {
   }
 
   update(state) {
-    this.rootElement.innerHTML = `Hold Alt and drag to move board; Hold Alt and use mouse wheel to zoom
-        <br>Match ID: <b><tt>${this.client.matchID}</tt></b>
-        <br>You have ${state.G.players[state.ctx.currentPlayer].length} cards.`;
+    this.rootElement.innerHTML = `
+        Match ID: <b><tt>${this.client.matchID}</tt></b>
+        <br/>Alt+drag to move board; Alt+mouse wheel to zoom; Q and E to rotate card.
+        <br>You have ${state.G.players[state.ctx.currentPlayer].length} cards. &mdash; `;
     
     if (state.ctx.currentPlayer == this.client.playerID) {
       this.rootElement.innerHTML += "It's your turn!";
