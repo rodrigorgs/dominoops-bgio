@@ -47,8 +47,10 @@ class App {
     // This event handler will read the cell id from a cell’s
     // `data-id` attribute and make the `clickCell` move.
     const handleCellClick = event => {
-      const id = parseInt(event.target.dataset.id);
-      this.client.moves.clickCell(id);
+      if (!event.altKey) {
+        const id = parseInt(event.target.dataset.id);
+        this.client.moves.clickCell(id);
+      }
     };
     // Attach the event listener to each of the board cells.
     const cells = this.rootElement.querySelectorAll('.cell');
@@ -75,7 +77,8 @@ class App {
     }
 
     let elem = document.getElementById('msg');
-    elem.innerHTML = `Match ID: <b><tt>${this.client.matchID}</tt></b> &mdash; `;
+    elem.innerHTML = `Hold Alt and drag to move board; use mouse wheel to zoom
+      <br>Match ID: <b><tt>${this.client.matchID}</tt></b> &mdash; `;
     if (state.ctx.currentPlayer == this.client.playerID) {
       elem.innerHTML += "It's your turn!";
     } else {
@@ -99,7 +102,7 @@ class App {
 
   getCardImageFromDeck(id) {
     const CARD_INPUT_SIZE = 400;
-    const CARD_OUTPUT_SIZE = 100;
+    const CARD_OUTPUT_SIZE = 400;
 
     let deck = document.getElementById('deck');
 
