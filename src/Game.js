@@ -1,10 +1,15 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
+import { GAME_NAME } from './config';
 
 export const BOARD_WIDTH = 6;
 export const BOARD_HEIGHT = 4;
 
 export const Game = {
-  setup: () => ({ cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null) }),
+  name: GAME_NAME,
+
+  setup: () => ({
+    cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null)
+  }),
 
   turn: {
     moveLimit: 1,
@@ -19,7 +24,7 @@ export const Game = {
     },
   },
 
-  endif: (G, ctx) => {
-    // TODO
-  }
+  // endif: (G, ctx) => {
+  //   // TODO
+  // }
 };

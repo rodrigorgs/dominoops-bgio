@@ -1,1 +1,1 @@
-export const GAME_NAME = "Dominoops";
+export const GAME_NAME = "default";

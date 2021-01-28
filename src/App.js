@@ -1,9 +1,13 @@
 import { SocketIO } from 'boardgame.io/multiplayer'
-import { Client } from 'boardgame.io/client';
+import { Client, LobbyClient } from 'boardgame.io/client';
 import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
+import { GAME_NAME } from './config';
+import { SplashScreen } from './SplashScreen';
 
 const { protocol, hostname, port } = window.location;
 const server = `${protocol}//${hostname}:${port}`;
+console.log(server);
+
 class App {
   constructor(rootElement, playerId, matchId) {
     this.client = Client({
@@ -71,10 +75,11 @@ class App {
     }
 
     let elem = document.getElementById('msg');
+    elem.innerHTML = `Match ID: <b><tt>${this.client.matchID}</tt></b> &mdash; `;
     if (state.ctx.currentPlayer == this.client.playerID) {
-      elem.innerText = "It's your turn!";
+      elem.innerHTML += "It's your turn!";
     } else {
-      elem.innerText = `Wait, it's player ${state.ctx.currentPlayer}'s turn.`;
+      elem.innerHTML += `Wait, it's player ${state.ctx.currentPlayer}'s turn.`;
     }
   }
 
@@ -115,11 +120,29 @@ class App {
   }
 }
 
-let url = new URL(location.href);
-let playerId = url.searchParams.get("player") || null;
-let matchId = url.searchParams.get("match") || "default";
-console.log('playerId: ', playerId);
-console.log('matchId: ', matchId);
-
 const appElement = document.getElementById('app');
-const app = new App(appElement, playerId, matchId);
+SplashScreen(appElement).then(async choice => {
+  let playerId, matchId;
+  const lobbyClient = new LobbyClient({ server: server });
+
+  if (choice.op == 'create') {
+    playerId = '0';
+    console.log('numPlayers', choice.numPlayers);
+    const res = await lobbyClient.createMatch(GAME_NAME, { numPlayers: choice.numPlayers });
+    console.log(res);
+    matchId = res.matchID;
+    console.log(matchId);
+  } else if (choice.op == 'join') {
+    matchId = choice.room;
+    let match = await lobbyClient.getMatch(GAME_NAME, matchId);
+    console.log('players', match.players);
+    playerId = match.players.find(player => player.isConnected === undefined).id.toString();
+    console.log('playerId', playerId);
+  } else {
+    console.error('Invalid choice');
+  }
+  
+  if (choice.op == 'create' || choice.op == 'join') {
+    new App(appElement, playerId, matchId);
+  }
+});
