@@ -18,26 +18,12 @@
       height: 100px;
     }
   </style>
-  <script src='https://unpkg.com/panzoom@9.4.0/dist/panzoom.min.js'></script>
 </head>
 <body>
   <p id="msg"></p>
   <div id="app"></div>
-  <script src="./src/App.js"></script>
-  <script>
-    var element = document.querySelector('#app');
-    panzoom(element, {
-      beforeMouseDown: function(e) {
-        var shouldIgnore = !e.altKey;
-        return shouldIgnore;
-      },
-      beforeWheel: function(e) {
-        var shouldIgnore = !e.altKey;
-        return shouldIgnore;
-      },
-      zoomDoubleClickSpeed: 1, // disable double click
-    });
-  </script>
   <img id="deck" src="./src/deck.png" style="display: none;"></img>
+  
+  <script src="./src/App.js"></script>
 </body>
 </html>

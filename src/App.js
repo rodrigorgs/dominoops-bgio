@@ -3,6 +3,7 @@ import { Client, LobbyClient } from 'boardgame.io/client';
 import { Game } from './Game';
 import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT } from './config';
 import { SplashScreen } from './SplashScreen';
+import createPanZoom from 'panzoom';
 
 const { protocol, hostname, port } = window.location;
 const server = `${protocol}//${hostname}:${port}`;
@@ -123,6 +124,23 @@ class App {
     return croppedImage;
   }
 }
+
+///////////////////////////////
+
+var element = document.querySelector('#app');
+createPanZoom(element, {
+  beforeMouseDown: function (e) {
+    var shouldIgnore = !e.altKey;
+    return shouldIgnore;
+  },
+  beforeWheel: function (e) {
+    var shouldIgnore = !e.altKey;
+    return shouldIgnore;
+  },
+  zoomDoubleClickSpeed: 1 // disable double click
+});
+
+///////////////////////////////
 
 const appElement = document.getElementById('app');
 SplashScreen(appElement).then(async choice => {
