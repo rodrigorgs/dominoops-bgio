@@ -1,7 +1,7 @@
 import { SocketIO } from 'boardgame.io/multiplayer'
 import { Client, LobbyClient } from 'boardgame.io/client';
-import { Game, BOARD_WIDTH, BOARD_HEIGHT } from './Game';
-import { GAME_NAME } from './config';
+import { Game } from './Game';
+import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT } from './config';
 import { SplashScreen } from './SplashScreen';
 
 const { protocol, hostname, port } = window.location;
@@ -70,7 +70,7 @@ class App {
           const id = state.G.cells[index];
           // cellElems[index].innerHTML = id;
           if (id !== null) {
-            this.putCard(id * 10, x, y);
+            this.putCard(id, x, y);
           }
         }
       }
