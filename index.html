@@ -30,6 +30,10 @@
       beforeMouseDown: function(e) {
         var shouldIgnore = !e.altKey;
         return shouldIgnore;
+      },
+      beforeWheel: function(e) {
+        var shouldIgnore = !e.altKey;
+        return shouldIgnore;
       }
     });
   </script>
