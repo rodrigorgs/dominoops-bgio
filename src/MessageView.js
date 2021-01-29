@@ -1,3 +1,5 @@
+import { getClientCards } from "./utils";
+
 export class MessageView {
   constructor(rootElement, client) {
     this.rootElement = rootElement;
@@ -10,7 +12,7 @@ export class MessageView {
         <button id="endTurn">End turn</button>
         Match ID: <b><tt>${this.client.matchID}</tt></b>
         <br/>Alt+drag to move board; Alt+mouse wheel to zoom; Q and E to rotate card; Z and X to select card.
-        <br>You have ${state.G.players[state.ctx.currentPlayer].length} cards. &mdash; `;
+        <br>You have ${getClientCards(this.client).length} cards. &mdash; `;
     
     if (state.ctx.currentPlayer == this.client.playerID) {
       this.rootElement.innerHTML += "It's your turn!";
