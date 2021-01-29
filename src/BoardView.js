@@ -50,6 +50,7 @@ export class BoardView {
       if (card !== null) {
         const elem = this.deck.getCardImageElem(card.id);
         elem.style.transform = `rotate(${card.rotation * 90}deg)`;
+        elem.style.border = ``;
         cell.appendChild(elem);
       }
     });

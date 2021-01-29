@@ -9,7 +9,7 @@ export class MessageView {
         <button id="drawCard">Draw card</button>
         <button id="endTurn">End turn</button>
         Match ID: <b><tt>${this.client.matchID}</tt></b>
-        <br/>Alt+drag to move board; Alt+mouse wheel to zoom; Q and E to rotate card.
+        <br/>Alt+drag to move board; Alt+mouse wheel to zoom; Q and E to rotate card; Z and X to select card.
         <br>You have ${state.G.players[state.ctx.currentPlayer].length} cards. &mdash; `;
     
     if (state.ctx.currentPlayer == this.client.playerID) {

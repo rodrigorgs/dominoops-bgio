@@ -1,4 +1,4 @@
-import { getClientCards } from "./utils";
+import { getClientCards, getClientSelectedCardIndex } from "./utils";
 
 export class HandView {
   constructor(rootElement, client, deck) {
@@ -10,9 +10,13 @@ export class HandView {
     // Attach listeners
     document.onkeydown = (e) => {
       if (e.code === 'KeyQ') {
-        this.client.moves.rotateLastCardInHand(-1);
+        this.client.moves.rotateSelectedCard(-1);
       } else if (e.code === 'KeyE') {
-        this.client.moves.rotateLastCardInHand(1);
+        this.client.moves.rotateSelectedCard(1);
+      } else if (e.code === 'KeyZ') {
+        this.client.moves.moveSelectedCardIndex(-1);
+      } else if (e.code === 'KeyX') {
+        this.client.moves.moveSelectedCardIndex(1);
       }
     }
   }
@@ -23,9 +27,15 @@ export class HandView {
     }
 
     this.rootElement.innerHTML = '';
-    getClientCards(this.client).forEach(card => {
+    const selectedCardIndex = getClientSelectedCardIndex(this.client);
+    getClientCards(this.client).forEach((card, index) => {
       const elem = this.deck.getCardImageElem(card.id);
       elem.style.transform = `rotate(${card.rotation * 90}deg)`;
+      if (index === selectedCardIndex) {
+        elem.style.border = '2px solid red';
+      } else {
+        elem.style.border = '';
+      }
 
       this.rootElement.appendChild(elem);
       this.rootElement.appendChild(document.createElement('span'));
