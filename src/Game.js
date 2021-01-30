@@ -49,6 +49,11 @@ export const Game = {
       }
     },
 
+    setSelectedCardIndex: (G, ctx, index) => {
+      const p = G.players[ctx.currentPlayer];
+      p.selectedCardIndex = index;
+    },
+
     // TODO: rename
     clickCell: (G, ctx, cellIndex) => {
       if (G.cells[cellIndex] !== null) {

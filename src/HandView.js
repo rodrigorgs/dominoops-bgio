@@ -8,6 +8,7 @@ export class HandView {
     console.log(this.deck);
 
     this.rootElement.style.display = 'block';
+    
     // Attach listeners
     document.onkeydown = (e) => {
       if (e.code === 'KeyQ') {
@@ -36,6 +37,11 @@ export class HandView {
         elem.style.border = '2px solid red';
       } else {
         elem.style.border = '';
+      }
+
+      // attach listener
+      elem.onclick = (event) => {
+        this.client.moves.setSelectedCardIndex(index);
       }
 
       this.rootElement.appendChild(elem);
