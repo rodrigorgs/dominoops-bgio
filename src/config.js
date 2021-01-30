@@ -1,6 +1,6 @@
 export const GAME_NAME = "default";
 
-export const BOARD_WIDTH = 6;
+export const BOARD_WIDTH = 8;
 export const BOARD_HEIGHT = 4;
 export const CARDS_PER_HAND = 10; //4;
 

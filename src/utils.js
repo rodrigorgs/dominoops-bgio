@@ -36,6 +36,16 @@ export function getClientSelectedCardIndex(client) {
   return state.G.players[client.playerID].selectedCardIndex;
 }
 
+export function getClientSelectedCard(client) {
+  const cards = getClientCards(client);
+  const index = getClientSelectedCardIndex(client);
+  if (cards.length > 0 && index >= 0) {
+    return cards[index];
+  } else {
+    return null;
+  }
+}
+
 export function getCardAtBoardIndex(client, index) {
   return client.getState().G.cells[index];
 }
