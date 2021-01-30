@@ -11,7 +11,8 @@ export const Game = {
       cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null),
       players: {},
       deck: [...Array(NUM_CARDS).keys()],
-      started: false
+      started: false,
+      zIndex: 0
     }
 
     // shuffle deck
@@ -53,9 +54,12 @@ export const Game = {
       if (G.cells[cellIndex] !== null) {
         return INVALID_MOVE;
       }
+
       const hand = getCurrentPlayerCards(G, ctx);
       const cardIndex = getCurrentPlayerSelectedCardIndex(G, ctx);
-      G.cells[cellIndex] = hand.splice(cardIndex, 1)[0];
+      const card = hand.splice(cardIndex, 1)[0]
+      card.zIndex = G.zIndex++;
+      G.cells[cellIndex] = card;
 
       if (cardIndex > hand.length - 1) {
         setCurrentPlayerSelectedCardIndex(G, ctx, hand.length - 1);

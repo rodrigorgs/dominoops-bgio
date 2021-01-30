@@ -15,7 +15,7 @@ export function SplashScreen(rootElement) {
   
       const numPlayers = document.createElement('input');
       numPlayers.type = 'text';
-      numPlayers.value = '2';
+      numPlayers.value = '1';
       numPlayers.style = 'width: 2em;'
       rootElement.appendChild(numPlayers);
   

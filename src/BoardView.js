@@ -6,25 +6,24 @@ export class BoardView {
     this.rootElement = rootElement;
     this.client = client;
     this.deck = deck;
+    this.zindex = 0;
 
     this.createBoard();
     this.attachListeners();    
   }
 
   createBoard() {
-    const rows = [];
+    let id = 0;
+    let cells = [];
     for (let i = 0; i < BOARD_HEIGHT; i++) {
-      const cells = [];
       for (let j = 0; j < BOARD_WIDTH; j++) {
-        const id = BOARD_WIDTH * i + j;
-        cells.push(`<td class="cell" data-id="${id}"></td>`);
+        cells.push(`<div class="cell" data-id="${id}"></div>`);
+        id++;
       }
-      rows.push(`<tr>${cells.join('')}</tr>`);
     }
 
     this.rootElement.innerHTML = `
-      <table>${rows.join('')}</table>
-      <p class="winner"></p>
+      <div class="board">\n${cells.join('\n')}\n</div>
     `;
   }
 
@@ -48,10 +47,11 @@ export class BoardView {
       const card = getCardAtBoardIndex(this.client, index);
       cell.innerHTML = '';
       if (card !== null) {
-        const elem = this.deck.getCardImageElem(card.id);
-        elem.style.transform = `rotate(${card.rotation * 90}deg)`;
-        elem.style.border = ``;
-        cell.appendChild(elem);
+        cell.style.zIndex = card.zIndex;
+        const img = this.deck.getCardImageElem(card.id);
+        img.style.transform = `rotate(${card.rotation * 90}deg)`;
+        img.style.border = ``;
+        cell.appendChild(img);
       }
     });
   }
