@@ -6,7 +6,8 @@ export class HandView {
     this.client = client;
     this.deck = deck;
     console.log(this.deck);
-    
+
+    this.rootElement.style.display = 'block';
     // Attach listeners
     document.onkeydown = (e) => {
       if (e.code === 'KeyQ') {
