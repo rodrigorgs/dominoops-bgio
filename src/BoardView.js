@@ -6,7 +6,6 @@ export class BoardView {
     this.rootElement = rootElement;
     this.client = client;
     this.deck = deck;
-    this.zindex = 0;
     
     this.invisibleElem = document.createElement('div');
     this.invisibleElem.style.visibility = 'none';
@@ -14,8 +13,22 @@ export class BoardView {
     this.cardGhost = document.createElement('img');
     this.cardGhost.width = 200;
     this.cardGhost.height = 200;
-    this.cardGhost.style.opacity = 0.5;
+    this.cardGhost.style.opacity = 0.9;
     this.cardGhost.style.pointerEvents = 'none';
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyW') {
+        console.log('prev cardGhost zIndex: ', this.cardGhost.style.zIndex);
+        this.cardGhost.style.zIndex = -this.cardGhost.style.zIndex;
+        console.log('cardGhost zIndex: ', this.cardGhost.style.zIndex);
+      //   const selectedCard = getClientSelectedCard(this.client);
+      //   console.log('organize', selectedCard);
+      //   if (selectedCard) {
+      //     selectedCard.zIndex = -selectedCard.zIndex;
+      //     this.cardGhost.style.zIndex = selectedCard.zIndex;
+      //   }
+      }
+    });
 
     this.createBoard();
     this.attachListeners();    
@@ -51,7 +64,9 @@ export class BoardView {
       // ghost card
       cell.onmouseover = (event) => {
         if (!cell.hasChildNodes()) {
+          const oldIndex = this.cardGhost.zIndex;
           cell.appendChild(this.cardGhost);
+          this.cardGhost.style.zIndex = oldIndex;
         }
       }
     });
@@ -83,6 +98,8 @@ export class BoardView {
     if (selectedCard) {
       this.cardGhost.src = this.deck.getCardImageElem(selectedCard.id).src;
       this.cardGhost.style.transform = `rotate(${selectedCard.rotation * 90}deg)`;
+      // this.cardGhost.zIndex = this.client.getState().G.zIndex;
+      console.log('assign cardGhost zIndex', this.cardGhost.zIndex);
     } else {
       this.cardGhost.src = null;
     }
