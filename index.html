@@ -44,11 +44,15 @@
 
     #ghost {
       filter: brightness(0.7) sepia(30%);
-      /* grayscale(100%); */
       width: 200px;
       height: 200px;
       pointer-events: none;
     }
+
+    #ghost, #hand img {
+      transition: transform 300ms; /* TODO: doesn't work because cards are updated */
+    }
+
   </style>
 </head>
 <body>
