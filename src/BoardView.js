@@ -91,7 +91,18 @@ export class BoardView {
       if (card !== null) {
         cell.style.zIndex = 500 + card.zIndex;
         const img = this.deck.getCardImageElem(card.id);
-        img.style.transform = `rotate(${card.rotation * 90}deg)`;
+        img.style.transform = `rotate(${(card.rotation % 4) * 90}deg)`;
+        console.log('rotation', card.rotation);
+        const dropShadows = [
+          [4, 4],
+          [4, -4],
+          [-4, -4],
+          [-4, 4]
+        ];
+        const dp = dropShadows[card.rotation % 4];
+        const filter = `drop-shadow(${dp[0]}px ${dp[1]}px 2px #333333)`;
+        img.style.setProperty('filter', filter);
+
         img.style.border = ``;
         cell.appendChild(img);
       }
