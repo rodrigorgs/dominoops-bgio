@@ -16,6 +16,8 @@ export class BoardView {
     const panzoom = createPanZoom(document.querySelector('.board'), {
       zoomDoubleClickSpeed: 1, // disable double click
       initialZoom: 1.0,
+      maxZoom: 2.5,
+      minZoom: 0.2,
       beforeMouseDown: (e) => {
         this.hasPanned = false;
         return false;
