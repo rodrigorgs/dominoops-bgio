@@ -3,6 +3,9 @@ import { Card } from './Card';
 import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from './config';
 import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils'
 
+const MOVES_LIMIT = 1;
+const DRAWS_LIMIT = 1;
+
 export const Game = {
   name: GAME_NAME,
 
@@ -12,7 +15,9 @@ export const Game = {
       players: {},
       deck: [...Array(NUM_CARDS).keys()],
       started: false,
-      zIndex: 0
+      zIndex: 0,
+      movesLeft: MOVES_LIMIT,
+      drawsLeft: DRAWS_LIMIT
     }
 
     // shuffle deck
@@ -48,7 +53,7 @@ export const Game = {
 
     // TODO: rename
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
-      if (G.cells[cellIndex] !== null) {
+      if (G.cells[cellIndex] !== null || G.movesLeft <= 0) {
         return INVALID_MOVE;
       }
 
@@ -63,20 +68,21 @@ export const Game = {
         hand.splice(i, 1);
       }
 
-      
-      ctx.events.endTurn();
+      G.movesLeft--;
+      // ctx.events.endTurn();
     },
 
     endTurn: (G, ctx) => {
+      G.movesLeft = MOVES_LIMIT;
+      G.drawsLeft = DRAWS_LIMIT;
       ctx.events.endTurn();
     },
 
     drawCard: (G, ctx) => {
-      if (G.deck.length === 0) {
-        return;
+      if (G.deck.length > 0 && G.drawsLeft >= 0 && G.movesLeft >= 0) {
+        getCurrentPlayerCards(G, ctx).push(G.deck.pop());
+        G.drawsLeft--;
       }
-
-      getCurrentPlayerCards(G, ctx).push(G.deck.pop());
     },
 
     shuffleDeck: (G, ctx) => {
