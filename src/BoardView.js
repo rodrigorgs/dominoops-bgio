@@ -15,14 +15,13 @@ export class BoardView {
     this.hasPanned = false;
     const panzoom = createPanZoom(document.querySelector('.board'), {
       zoomDoubleClickSpeed: 1, // disable double click
-      initialX: -300,
-      initialY: -300,
-      initialZoom: 0.5,
+      initialZoom: 1.0,
       beforeMouseDown: (e) => {
         this.hasPanned = false;
         return false;
       }
     });
+    panzoom.moveTo(0, -400);
 
     panzoom.on('panstart', () => this.hasPanned = true);
   }
