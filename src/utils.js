@@ -1,5 +1,10 @@
 // TODO: extract class
 
+export function updateCardRotationsOnServer(client) {
+  const rotations = getClientCards(client).map(card => card.rotation);
+  client.moves.setPlayerCardRotations(rotations);
+}
+
 export function getPlayerCards(G, playerId) {
   return G.players[playerID].cards;
 }

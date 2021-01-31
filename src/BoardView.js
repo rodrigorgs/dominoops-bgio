@@ -1,6 +1,6 @@
 import createPanZoom from "panzoom";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./config";
-import { getCardAtBoardIndex, getClientCards, getClientSelectedCard } from "./utils";
+import { getCardAtBoardIndex, updateCardRotationsOnServer } from "./utils";
 
 export class BoardView {
   constructor(rootElement, client, deck) {
@@ -78,8 +78,7 @@ export class BoardView {
     const handleCellClick = event => {
       if (!this.hasPanned && this.selectedCard) {
         const id = parseInt(event.target.dataset.id);
-        const rotations = getClientCards(this.client).map(card => card.rotation);
-        this.client.moves.setPlayerCardRotations(rotations);
+        updateCardRotationsOnServer(this.client);
         this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
         this.ghostZindex = 1 + Math.abs(this.ghostZindex);
       }

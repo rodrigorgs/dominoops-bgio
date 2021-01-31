@@ -1,4 +1,4 @@
-import { getClientCards } from "./utils";
+import { getClientCards, updateCardRotationsOnServer } from "./utils";
 
 export class MessageView {
   constructor(rootElement, client) {
@@ -25,6 +25,7 @@ export class MessageView {
     }
 
     document.getElementById('endTurn').onclick = (e) => {
+      updateCardRotationsOnServer(this.client);
       this.client.moves.endTurn();
     }
   }
