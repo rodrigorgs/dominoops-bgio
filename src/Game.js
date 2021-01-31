@@ -55,7 +55,7 @@ export const Game = {
     },
 
     // TODO: rename
-    clickCell: (G, ctx, cellIndex) => {
+    clickCell: (G, ctx, cellIndex, zIndex) => {
       if (G.cells[cellIndex] !== null) {
         return INVALID_MOVE;
       }
@@ -63,8 +63,9 @@ export const Game = {
       const hand = getCurrentPlayerCards(G, ctx);
       const cardIndex = getCurrentPlayerSelectedCardIndex(G, ctx);
       const card = hand.splice(cardIndex, 1)[0]
-      card.zIndex = G.zIndex++;
+      card.zIndex = zIndex;
       G.cells[cellIndex] = card;
+      G.zIndex++;
 
       if (cardIndex > hand.length - 1) {
         setCurrentPlayerSelectedCardIndex(G, ctx, hand.length - 1);
