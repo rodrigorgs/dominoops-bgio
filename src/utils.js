@@ -1,7 +1,8 @@
+// TODO: extract class
+
 export function getPlayerCards(G, playerId) {
   return G.players[playerID].cards;
 }
-
 
 export function getCurrentPlayerCards(G, ctx) {
   return G.players[ctx.currentPlayer].cards;
@@ -24,6 +25,11 @@ export function getCurrentPlayerSelectedCard(G, ctx) {
   } else {
     return null;
   }
+}
+
+export function getClientPlayer(client) {
+  const state = client.getState();
+  return state.G.players[client.playerID];
 }
 
 export function getClientCards(client) {

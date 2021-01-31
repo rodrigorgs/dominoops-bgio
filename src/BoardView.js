@@ -1,6 +1,6 @@
 import createPanZoom from "panzoom";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./config";
-import { getCardAtBoardIndex, getClientSelectedCard } from "./utils";
+import { getCardAtBoardIndex, getClientCards, getClientSelectedCard } from "./utils";
 
 export class BoardView {
   constructor(rootElement, client, deck) {
@@ -28,13 +28,19 @@ export class BoardView {
   }
 
   createGhost() {
+    this.selectedCard = null;
+
     this.invisibleElem = document.createElement('div');
     this.invisibleElem.style.display = 'none';
 
     this.cardGhost = document.createElement('img');
     this.cardGhost.id = 'ghost';
+    this.cardGhost.src = undefined;
+    this.invisibleElem.appendChild(this.cardGhost);
     
-    this.ghostZindex = 1;
+    this.ghostZindex = 2;
+
+    this.setGhostVisible(false);
 
     document.addEventListener('keydown', (e) => {
       if (e.code === 'KeyW') {
@@ -70,9 +76,11 @@ export class BoardView {
 
   attachListeners() {
     const handleCellClick = event => {
-      if (!this.hasPanned) {
+      if (!this.hasPanned && this.selectedCard) {
         const id = parseInt(event.target.dataset.id);
-        this.client.moves.clickCell(id, this.ghostZindex);
+        const rotations = getClientCards(this.client).map(card => card.rotation);
+        this.client.moves.setPlayerCardRotations(rotations);
+        this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
         this.ghostZindex = 1 + Math.abs(this.ghostZindex);
       }
     };
@@ -106,14 +114,12 @@ export class BoardView {
       if (card !== null) {
         cell.style.zIndex = 500 + card.zIndex;
         const img = this.deck.getCardImageElem(card.id);
+        // rotation
         img.style.transform = `rotate(${(card.rotation % 4) * 90}deg)`;
-        const dropShadows = [
-          [4, 4],
-          [4, -4],
-          [-4, -4],
-          [-4, 4]
-        ];
-        const dp = dropShadows[card.rotation % 4];
+        
+        // drop shadow
+        const dropShadows = [[4, 4], [4, -4], [-4, -4], [-4, 4]];
+        const dp = dropShadows[((card.rotation % 4) + 4) % 4];
         const filter = `drop-shadow(${dp[0]}px ${dp[1]}px 2px #333333)`;
         img.style.setProperty('filter', filter);
 
@@ -121,25 +127,24 @@ export class BoardView {
         cell.appendChild(img);
       }
     });
-    
-    // update ghost to selected card (if it changed)
-    const selectedCard = getClientSelectedCard(this.client);
-    if (selectedCard) {
-      this.cardGhost.src = this.deck.getCardImageElem(selectedCard.id).src;
-      this.cardGhost.style.transform = `rotate(${selectedCard.rotation * 90}deg)`;
+  }
+
+  setGhostVisible(visible) {
+    this.cardGhost.style.display = visible ? 'block' : 'none';
+  }
+
+  onCardSelect(card) {
+    this.selectedCard = card;
+    if (card) {
+      const newSrc = this.deck.getCardImageElem(card.id).src;
+      if (this.cardGhost.src !== newSrc) {
+        this.cardGhost.src = newSrc;
+      }
+      this.cardGhost.style.transform = `rotate(${card.rotation * 90}deg)`;
+      this.setGhostVisible(true);
     } else {
       this.cardGhost.src = null;
-    }
-
-    // reposition ghost
-    const hover = Array.from(document.querySelectorAll(':hover'));
-    const hoverCells = hover.filter(e => e.className == 'cell');
-    if (hoverCells.length == 1) {
-      const cell = hoverCells[0];
-      if (!cell.hasChildNodes()) {
-        cell.appendChild(this.cardGhost);
-        this.setGhostZindex(this.ghostZindex);
-      }
+      this.setGhostVisible(false);
     }
   }
 }

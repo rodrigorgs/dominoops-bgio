@@ -39,43 +39,31 @@ export const Game = {
   },
 
   moves: {
-    rotateSelectedCard: (G, ctx, amount) => {
-      const card = getCurrentPlayerSelectedCard(G, ctx);
-      if (card !== null) {
-        card.rotation = (card.rotation + 4 + amount) % 4;
+    setPlayerCardRotations: (G, ctx, cardRotations) => {
+      const hand = getCurrentPlayerCards(G, ctx);
+      for (let i = 0; i < hand.length; i++) {
+        hand[i].rotation = ((cardRotations[i] % 4) + 4) % 4; // deals with negative numbers
       }
-    },
-
-    moveSelectedCardIndex: (G, ctx, amount) => {
-      const cards = getCurrentPlayerCards(G, ctx);
-      const p = G.players[ctx.currentPlayer];
-      if (cards.length > 0) {
-        p.selectedCardIndex = (amount + p.selectedCardIndex + cards.length) % cards.length;
-      }
-    },
-
-    setSelectedCardIndex: (G, ctx, index) => {
-      const p = G.players[ctx.currentPlayer];
-      p.selectedCardIndex = index;
     },
 
     // TODO: rename
-    clickCell: (G, ctx, cellIndex, zIndex) => {
+    clickCell: (G, ctx, cellIndex, zIndex, card) => {
       if (G.cells[cellIndex] !== null) {
         return INVALID_MOVE;
       }
 
-      const hand = getCurrentPlayerCards(G, ctx);
-      const cardIndex = getCurrentPlayerSelectedCardIndex(G, ctx);
-      const card = hand.splice(cardIndex, 1)[0]
       card.zIndex = zIndex;
       G.cells[cellIndex] = card;
       G.zIndex++;
 
-      if (cardIndex > hand.length - 1) {
-        setCurrentPlayerSelectedCardIndex(G, ctx, hand.length - 1);
+      // remove card from hand
+      const hand = getCurrentPlayerCards(G, ctx);
+      const i = hand.findIndex(c => c.id === card.id);
+      if (i >= 0) {
+        hand.splice(i, 1);
       }
 
+      
       ctx.events.endTurn();
     },
 

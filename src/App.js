@@ -27,8 +27,8 @@ class App {
     this.rootElement = rootElement;
 
     this.deck = new Deck(document.getElementById('deck'), NUM_CARDS, CARD_WIDTH, CARD_HEIGHT, DECK_N_COLUMNS);
-    this.handView = new HandView(document.getElementById('hand'), this.client, this.deck);
     this.boardView = new BoardView(document.getElementById('app'), this.client, this.deck);
+    this.handView = new HandView(document.getElementById('hand'), this.client, this.deck, this.boardView.onCardSelect.bind(this.boardView));
     this.messageView = new MessageView(document.getElementById('msg'), this.client);
   }
 
