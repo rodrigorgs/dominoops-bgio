@@ -1,3 +1,4 @@
+import createPanZoom from "panzoom";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./config";
 import { getCardAtBoardIndex, getClientSelectedCard } from "./utils";
 
@@ -10,6 +11,16 @@ export class BoardView {
     this.createBoard();
     this.attachListeners();    
     this.createGhost();
+
+    this.hasPanned = false;
+    const panzoom = createPanZoom(document.querySelector('.board'), {
+      zoomDoubleClickSpeed: 1, // disable double click
+      beforeMouseDown: (e) => {
+        this.hasPanned = false;
+        return false;
+      }
+    });
+    panzoom.on('panstart', () => this.hasPanned = true);
   }
 
   createGhost() {
@@ -55,7 +66,7 @@ export class BoardView {
 
   attachListeners() {
     const handleCellClick = event => {
-      if (!event.altKey) {
+      if (!this.hasPanned) {
         const id = parseInt(event.target.dataset.id);
         this.client.moves.clickCell(id, this.ghostZindex);
         this.ghostZindex = 1 + Math.abs(this.ghostZindex);
@@ -92,7 +103,6 @@ export class BoardView {
         cell.style.zIndex = 500 + card.zIndex;
         const img = this.deck.getCardImageElem(card.id);
         img.style.transform = `rotate(${(card.rotation % 4) * 90}deg)`;
-        console.log('rotation', card.rotation);
         const dropShadows = [
           [4, 4],
           [4, -4],

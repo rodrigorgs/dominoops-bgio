@@ -43,21 +43,6 @@ class App {
 
 ///////////////////////////////
 
-var element = document.querySelector('#app');
-createPanZoom(element, {
-  beforeMouseDown: function (e) {
-    var shouldIgnore = !e.altKey;
-    return shouldIgnore;
-  },
-  beforeWheel: function (e) {
-    var shouldIgnore = !e.altKey;
-    return shouldIgnore;
-  },
-  zoomDoubleClickSpeed: 1 // disable double click
-});
-
-///////////////////////////////
-
 const appElement = document.getElementById('app');
 SplashScreen(appElement).then(async choice => {
   let playerId, matchId;
