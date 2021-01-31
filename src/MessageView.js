@@ -7,15 +7,16 @@ export class MessageView {
   }
 
   update(state) {
+    console.log('gameover', state.ctx.gameover);
     this.rootElement.innerHTML = `
         <button id="drawCard">Draw card</button>
         <button id="endTurn">End turn</button>
+        <b id="restart" style="display: ${state.ctx.gameover ? 'inline' : 'none'}">Game over!</b>
         Match ID: <b><tt>${this.client.matchID}</tt></b>
         <br/><b>Click and drag</b> to pan, <b>mouse wheel</b> to zoom; <b>Q</b> and <b>E</e> to rotate card; <b>W</b> to move card to front/back.
         <br>Players: `;
     
     Object.entries(state.G.players).forEach(([playerId, playerData]) => {
-      console.log(playerId, playerData);
       let str = `Player ${playerId}`;
       if (playerId == this.client.playerID) {
         str += ` (You)`

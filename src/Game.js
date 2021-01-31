@@ -88,7 +88,12 @@ export const Game = {
     }
   },
 
-  // endif: (G, ctx) => {
-  //   // TODO
-  // }
+  endIf: (G, ctx) => {
+    const finished = getCurrentPlayerCards(G, ctx).length == 0;
+    if (finished) {
+      const player = ctx.currentPlayer;
+      console.log('Winner: ', player);
+      return { winner: player }
+    }
+  }
 };
