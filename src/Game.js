@@ -18,6 +18,11 @@ export const Game = {
     // shuffle deck
     G.deck = ctx.random.Shuffle(G.deck);
     G.deck = G.deck.map(id => new Card(id, ctx.random.D4()));
+
+    // put card in the middle of the board
+    const middleX = Math.floor(BOARD_WIDTH / 2);
+    const middleY = Math.floor(BOARD_HEIGHT / 2);
+    G.cells[middleY * BOARD_WIDTH + middleX] = G.deck.pop();
     
     // draw cards to players
     for (let i = 0; i < ctx.numPlayers; i++) {
