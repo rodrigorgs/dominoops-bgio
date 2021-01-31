@@ -10,7 +10,7 @@ export class HandView {
     this.rootElement.style.display = 'block';
     
     // Attach listeners
-    document.onkeydown = (e) => {
+    document.addEventListener('keydown', (e) => {
       if (e.code === 'KeyQ') {
         this.client.moves.rotateSelectedCard(-1);
       } else if (e.code === 'KeyE') {
@@ -20,7 +20,7 @@ export class HandView {
       } else if (e.code === 'KeyX') {
         this.client.moves.moveSelectedCardIndex(1);
       }
-    }
+    });
   }
 
   update(state) {

@@ -1,7 +1,7 @@
 export class Card {
-  constructor(id, rotation, zindex = 0) {
+  constructor(id, rotation, zIndex = -1) {
     this.id = id;
     this.rotation = rotation;
-    this.zindex = zindex;
+    this.zIndex = zIndex;
   }
 }

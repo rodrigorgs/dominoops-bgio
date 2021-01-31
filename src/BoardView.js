@@ -6,19 +6,36 @@ export class BoardView {
     this.rootElement = rootElement;
     this.client = client;
     this.deck = deck;
-    this.zindex = 0;
-    
-    this.invisibleElem = document.createElement('div');
-    this.invisibleElem.style.visibility = 'none';
-
-    this.cardGhost = document.createElement('img');
-    this.cardGhost.width = 200;
-    this.cardGhost.height = 200;
-    this.cardGhost.style.opacity = 0.5;
-    this.cardGhost.style.pointerEvents = 'none';
 
     this.createBoard();
     this.attachListeners();    
+    this.createGhost();
+  }
+
+  createGhost() {
+    this.invisibleElem = document.createElement('div');
+    this.invisibleElem.style.display = 'none';
+
+    this.cardGhost = document.createElement('img');
+    this.cardGhost.id = 'ghost';
+    
+    this.ghostZindex = 1;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyW') {
+        this.switchGhostZindex();
+      }
+    });
+  }
+
+  switchGhostZindex() {
+    this.setGhostZindex(-this.ghostZindex);
+  }
+  setGhostZindex(zindex) {
+    this.ghostZindex = zindex;
+    if (this.cardGhost && this.cardGhost.parentElement.className == 'cell') {
+      this.cardGhost.parentElement.style.zIndex = 500 + zindex;
+    }
   }
 
   createBoard() {
@@ -40,7 +57,8 @@ export class BoardView {
     const handleCellClick = event => {
       if (!event.altKey) {
         const id = parseInt(event.target.dataset.id);
-        this.client.moves.clickCell(id);
+        this.client.moves.clickCell(id, this.ghostZindex);
+        this.ghostZindex = 1 + Math.abs(this.ghostZindex);
       }
     };
     
@@ -48,10 +66,11 @@ export class BoardView {
     cells.forEach(cell => {
       cell.onclick = handleCellClick;
 
-      // ghost card
+      // move ghost card to cell
       cell.onmouseover = (event) => {
         if (!cell.hasChildNodes()) {
           cell.appendChild(this.cardGhost);
+          this.setGhostZindex(this.ghostZindex);
         }
       }
     });
@@ -70,7 +89,7 @@ export class BoardView {
       const card = getCardAtBoardIndex(this.client, index);
       cell.innerHTML = '';
       if (card !== null) {
-        cell.style.zIndex = card.zIndex;
+        cell.style.zIndex = 500 + card.zIndex;
         const img = this.deck.getCardImageElem(card.id);
         img.style.transform = `rotate(${card.rotation * 90}deg)`;
         img.style.border = ``;
@@ -78,7 +97,7 @@ export class BoardView {
       }
     });
     
-    // update selected card
+    // update ghost to selected card (if it changed)
     const selectedCard = getClientSelectedCard(this.client);
     if (selectedCard) {
       this.cardGhost.src = this.deck.getCardImageElem(selectedCard.id).src;
@@ -87,13 +106,14 @@ export class BoardView {
       this.cardGhost.src = null;
     }
 
-    // ghost
+    // reposition ghost
     const hover = Array.from(document.querySelectorAll(':hover'));
     const hoverCells = hover.filter(e => e.className == 'cell');
     if (hoverCells.length == 1) {
       const cell = hoverCells[0];
       if (!cell.hasChildNodes()) {
         cell.appendChild(this.cardGhost);
+        this.setGhostZindex(this.ghostZindex);
       }
     }
   }
