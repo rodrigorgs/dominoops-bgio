@@ -1,7 +1,9 @@
+import { BOARD_WIDTH, BOARD_HEIGHT } from "./config";
+
 // TODO: extract class
 
 export function updateCardRotationsOnServer(client) {
-  const rotations = getClientCards(client).map(card => card.rotation);
+  const rotations = getClientCards(client).map((card) => card.rotation);
   client.moves.setPlayerCardRotations(rotations);
 }
 
@@ -18,9 +20,8 @@ export function getCurrentPlayerSelectedCardIndex(G, ctx) {
 }
 
 export function setCurrentPlayerSelectedCardIndex(G, ctx, index) {
-  return G.players[ctx.currentPlayer].selectedCardIndex = index;
+  return (G.players[ctx.currentPlayer].selectedCardIndex = index);
 }
-
 
 export function getCurrentPlayerSelectedCard(G, ctx) {
   const cards = getCurrentPlayerCards(G, ctx);
@@ -59,4 +60,44 @@ export function getClientSelectedCard(client) {
 
 export function getCardAtBoardIndex(client, index) {
   return client.getState().G.cells[index];
+}
+
+export const CARD_SIDES = {
+  TOP: 0,
+  RIGHT: 1,
+  BOTTOM: 2,
+  LEFT: 3,
+};
+
+// Get indexes of all four sides of a position on the board (if valid)
+export function getSideIndexes(middleIndex) {
+  const indexes = [];
+
+  const x = Math.trunc(middleIndex / BOARD_WIDTH);
+  const y = middleIndex % BOARD_WIDTH;
+
+  const positionOffsets = [
+    { x: -1, y: 0, side: CARD_SIDES.TOP },
+    { x: 1, y: 0, side: CARD_SIDES.BOTTOM },
+    { x: 0, y: -1, side: CARD_SIDES.LEFT },
+    { x: 0, y: 1, side: CARD_SIDES.RIGHT },
+  ];
+
+  let newX = 0;
+  let newY = 0;
+
+  let offset = null;
+
+  for (let offsetIndex in positionOffsets) {
+    offset = positionOffsets[offsetIndex];
+
+    newX = x + offset.x;
+    newY = y + offset.y;
+
+    if (newX >= 0 && newX < BOARD_WIDTH && newY >= 0 && newY < BOARD_HEIGHT) {
+      indexes.push({ position: newX * BOARD_WIDTH + newY, side: offset.side });
+    }
+  }
+
+  return indexes;
 }
