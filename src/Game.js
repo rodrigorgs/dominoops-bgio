@@ -1,19 +1,8 @@
-import { INVALID_MOVE } from "boardgame.io/core";
-import { Card } from "./Card";
-import {
-  GAME_NAME,
-  BOARD_WIDTH,
-  BOARD_HEIGHT,
-  NUM_CARDS,
-  CARDS_PER_HAND,
-} from "./config";
-import {
-  getCurrentPlayerCards,
-  getCurrentPlayerSelectedCard,
-  getCurrentPlayerSelectedCardIndex,
-  setCurrentPlayerSelectedCardIndex,
-} from "./utils";
-import Rules from "./rules";
+import { INVALID_MOVE } from 'boardgame.io/core';
+import { Card } from './Card';
+import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from './config';
+import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils';
+import { Rules } from './Rules';
 
 const MOVES_LIMIT = 1;
 const DRAWS_LIMIT = 1;
@@ -21,7 +10,7 @@ const DRAWS_LIMIT = 1;
 export const Game = {
   name: GAME_NAME,
 
-  setup: (ctx) => {
+  setup: ctx => {
     const G = {
       cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null),
       players: {},
@@ -34,7 +23,7 @@ export const Game = {
 
     // shuffle deck
     G.deck = ctx.random.Shuffle(G.deck);
-    G.deck = G.deck.map((id) => new Card(id, ctx.random.D4()));
+    G.deck = G.deck.map(id => new Card(id, ctx.random.D4()));
 
     // put card in the middle of the board
     const middleX = Math.floor(BOARD_WIDTH / 2);
@@ -69,19 +58,26 @@ export const Game = {
         return INVALID_MOVE;
       }
 
+      console.log(card);
+
+      // TODO: tell player why move is invalid
+      if (!Rules.validateMove(G, ctx, cellIndex, zIndex, card)) {
+        console.warn('Move is invalid');
+        return INVALID_MOVE;
+      }
+
+      console.log(card);
+
+      // update card and insert into board
       card.zIndex = zIndex;
       G.cells[cellIndex] = card;
       G.zIndex++;
 
-      // TODO: Tell player why move is invalid
-      if (!Rules.validateMove(G, ctx, cellIndex, zIndex, card)) {
-        console.warn("Move is invalid");
-        return INVALID_MOVE;
-      }
+      console.log(G.cells[cellIndex]);
 
       // remove card from hand
       const hand = getCurrentPlayerCards(G, ctx);
-      const i = hand.findIndex((c) => c.id === card.id);
+      const i = hand.findIndex(c => c.id === card.id);
       if (i >= 0) {
         hand.splice(i, 1);
       }
@@ -116,7 +112,7 @@ export const Game = {
     const finished = getCurrentPlayerCards(G, ctx).length == 0;
     if (finished) {
       const player = ctx.currentPlayer;
-      console.log("Winner: ", player);
+      console.log('Winner: ', player);
       return { winner: player };
     }
   },

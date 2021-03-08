@@ -1,9 +1,9 @@
-import { BOARD_WIDTH, BOARD_HEIGHT } from "./config";
+import { BOARD_WIDTH, BOARD_HEIGHT } from './config';
 
 // TODO: extract class
 
 export function updateCardRotationsOnServer(client) {
-  const rotations = getClientCards(client).map((card) => card.rotation);
+  const rotations = getClientCards(client).map(card => card.rotation);
   client.moves.setPlayerCardRotations(rotations);
 }
 

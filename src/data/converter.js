@@ -1,14 +1,14 @@
-const fs = require("fs");
-const csv = require("csv");
+const fs = require('fs');
+const csv = require('csv');
 
 const parse = csv.parse;
 
-const classesPath = "./base-classes";
-const objectsPath = "./base-objects";
+const classesPath = './base-classes';
+const objectsPath = './base-objects';
 
 const parseArguments = {};
 
-parseArguments.onRecord = (data) => {
+parseArguments.onRecord = data => {
   const values = [];
 
   for (const property in data) {
@@ -16,7 +16,7 @@ parseArguments.onRecord = (data) => {
   }
 
   const isDataEmpty = values.every((value, index) => {
-    return value === "";
+    return value === '';
   });
 
   return isDataEmpty ? null : data;
@@ -39,13 +39,9 @@ parseArguments.callback = (err, records) => {
 const classesParser = parse(parseArguments.options, parseArguments.callback);
 const objectsParser = parse(parseArguments.options, parseArguments.callback);
 
-const classesReadStream = fs.createReadStream(
-  `${__dirname}/${classesPath}.csv`,
-);
+const classesReadStream = fs.createReadStream(`${__dirname}/${classesPath}.csv`);
 
-const objectsReadStream = fs.createReadStream(
-  `${__dirname}/${objectsPath}.csv`,
-);
+const objectsReadStream = fs.createReadStream(`${__dirname}/${objectsPath}.csv`);
 
 // const classesWriteStream = fs.createWriteStream(
 //   `${__dirname}/${classesPath}.js`,
