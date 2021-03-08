@@ -54,26 +54,23 @@ export const Game = {
 
     // TODO: rename
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
-      if (G.cells[cellIndex] !== null || G.movesLeft <= 0) {
+      if (G.movesLeft <= 0) {
+        console.warn('No moves left!');
         return INVALID_MOVE;
       }
-
-      console.log(card);
 
       // TODO: tell player why move is invalid
-      if (!Rules.validateMove(G, ctx, cellIndex, zIndex, card)) {
-        console.warn('Move is invalid');
+      const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
+
+      if (!result.success) {
+        console.warn(result.error);
         return INVALID_MOVE;
       }
-
-      console.log(card);
 
       // update card and insert into board
       card.zIndex = zIndex;
       G.cells[cellIndex] = card;
       G.zIndex++;
-
-      console.log(G.cells[cellIndex]);
 
       // remove card from hand
       const hand = getCurrentPlayerCards(G, ctx);
