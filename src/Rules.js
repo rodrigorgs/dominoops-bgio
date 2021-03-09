@@ -37,7 +37,7 @@ export const Rules = {
   },
 
   verifyPosition: (G, cellIndex) => {
-    const error = 'Posição selecionada ocupada!';
+    const error = 'Já existe uma carta nessa posição!';
 
     if (G.cells[cellIndex] !== null) {
       return {
@@ -78,7 +78,7 @@ export const Rules = {
 
     const error = {
       noCards: 'Não existem cartas adjacentes nessa posição!',
-      multipleCards: 'Mais de uma conexão possível!',
+      multipleCards: 'Uma carta não pode se conectar a duas ou mais cartas!',
     };
 
     const sideCells = Rules.getSideCells(G, cellIndex);
@@ -104,7 +104,7 @@ export const Rules = {
   verifyCardConnections: (G, cellIndex) => {
     const sideCells = Rules.getSideCells(G, cellIndex);
 
-    const error = 'Já existe mais de uma conexão na carta adjacente!';
+    const error = 'Você só pode conectar sua carta a uma carta que está uma das pontas (i.e., uma carta conectada a no máximo uma outra carta)';
 
     if (sideCells.length > 1) {
       return {
@@ -137,7 +137,7 @@ export const Rules = {
   },
 
   verifyCardMatch: (currentCard, zIndex, sideCell) => {
-    const error = 'Atributo e carta não encaixam!';
+    const error = 'Atributo e carta não encaixam!'; // TODO: detalhar
 
     const currentCell = { ...currentCard };
     currentCell.card = baseObjects[currentCell.id];
