@@ -55,7 +55,7 @@ export const Game = {
     // TODO: rename
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
       if (G.movesLeft <= 0) {
-        console.warn('No moves left!');
+        alert('Nenhuma jogada restante!');
         return INVALID_MOVE;
       }
 
@@ -63,7 +63,7 @@ export const Game = {
       const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
 
       if (!result.success) {
-        console.warn(result.error);
+        alert(result.error);
         return INVALID_MOVE;
       }
 
