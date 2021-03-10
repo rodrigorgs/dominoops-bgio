@@ -137,7 +137,18 @@ export const Rules = {
   },
 
   verifyCardMatch: (currentCard, zIndex, sideCell) => {
-    const error = 'Atributo e carta não encaixam!'; // TODO: detalhar
+    const error = (topSideVar, topSideClass, bottomCard) => {
+      const noAttributeMessage = 'Não existe atributo nesse lado da carta!';
+
+      if (topSideVar === '' || topSideClass == '') {
+        return noAttributeMessage;
+      }
+
+      const topMessage = `O atributo "${topSideVar}", do tipo "${topSideClass}"`;
+      const bottomMessage = `"${bottomCard.object}", do tipo "${bottomCard.class}"`;
+
+      return `${topMessage}, não é compatível com a carta ${bottomMessage}`;
+    };
 
     const currentCell = { ...currentCard };
     currentCell.card = baseObjects[currentCell.id];
@@ -165,22 +176,27 @@ export const Rules = {
 
     const topCardAttributeSide = (4 + cellRelativePosition - topCell.rotation) % 4;
 
+    let topCardSideVar = '';
     let topCardSideClass = '';
 
     switch (topCardAttributeSide) {
       case CARD_SIDES.TOP:
+        topCardSideVar = topCellClass.topVar;
         topCardSideClass = topCellClass.topClass;
         break;
 
       case CARD_SIDES.BOTTOM:
+        topCardSideVar = topCellClass.bottomVar;
         topCardSideClass = topCellClass.bottomClass;
         break;
 
       case CARD_SIDES.LEFT:
+        topCardSideVar = topCellClass.leftVar;
         topCardSideClass = topCellClass.leftClass;
         break;
 
       case CARD_SIDES.RIGHT:
+        topCardSideVar = topCellClass.rightVar;
         topCardSideClass = topCellClass.rightClass;
         break;
 
@@ -189,10 +205,13 @@ export const Rules = {
         break;
     }
 
+    console.log(topCardSideClass);
+    console.log(bottomCell.card);
+
     if (!Rules.verifyPolymorphismMatch(topCardSideClass, bottomCell.card.class)) {
       return {
         success: false,
-        error: error,
+        error: error(topCardSideVar, topCardSideClass, bottomCell.card),
       };
     }
 
