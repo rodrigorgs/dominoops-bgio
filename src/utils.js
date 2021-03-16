@@ -8,7 +8,7 @@ export function updateCardRotationsOnServer(client) {
 }
 
 export function getPlayerCards(G, playerId) {
-  return G.players[playerID].cards;
+  return G.players[playerId].cards;
 }
 
 export function getCurrentPlayerCards(G, ctx) {
