@@ -1,4 +1,4 @@
-import { getClientCards, getClientSelectedCard, getClientSelectedCardIndex, getClientPlayer } from "./utils";
+import { getClientCards, getClientSelectedCard, getClientSelectedCardIndex, getClientPlayer } from './utils';
 
 export class HandView {
   constructor(rootElement, client, deck, selectionHandler) {
@@ -10,9 +10,9 @@ export class HandView {
     this.selectedCardIndex = 0;
 
     this.rootElement.style.display = 'block';
-    
+
     // Attach listeners
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       const card = this.getSelectedCard();
       if (card !== null) {
         if (e.code === 'KeyQ') {
@@ -52,14 +52,14 @@ export class HandView {
     const cards = getClientCards(this.client);
     if (this.selectedCardIndex >= 0 && this.selectedCardIndex < cards.length) {
       document.querySelectorAll('#hand img').forEach((elem, index) => {
-        elem.style.border = (index === this.selectedCardIndex) ? '2px solid red' : '';
+        elem.style.border = index === this.selectedCardIndex ? '2px solid red' : '';
       });
     }
   }
 
   update(state) {
     if (state === null) {
-        return;
+      return;
     }
 
     this.rootElement.innerHTML = '';
@@ -68,13 +68,13 @@ export class HandView {
       const elem = this.updateCardTransform(card);
 
       // attach listener
-      elem.onclick = (event) => {
+      elem.onclick = event => {
         this.selectedCardIndex = index;
         this.highlightSelectedCard();
         if (this.selectionHandler) {
           this.selectionHandler(getClientCards(this.client)[index]);
         }
-      }
+      };
 
       this.rootElement.appendChild(elem);
       this.rootElement.appendChild(document.createElement('span'));
@@ -85,5 +85,5 @@ export class HandView {
     }
     this.highlightSelectedCard();
     this.selectionHandler(this.getSelectedCard());
-  } 
+  }
 }

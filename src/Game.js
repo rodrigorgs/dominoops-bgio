@@ -59,7 +59,6 @@ export const Game = {
         return INVALID_MOVE;
       }
 
-      // TODO: tell player why move is invalid
       const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
 
       if (!result.success) {
