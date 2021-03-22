@@ -1,6 +1,6 @@
 import { LobbyClient } from 'boardgame.io/client';
-import { GAME_NAME } from "./config";
-import { getClientCards, updateCardRotationsOnServer } from "./utils";
+import { GAME_NAME } from './config';
+import { getClientCards, updateCardRotationsOnServer } from './utils';
 
 export class MessageView {
   constructor(rootElement, client, appView) {
@@ -34,11 +34,11 @@ export class MessageView {
         Match ID: <b><tt>${this.client.matchID}</tt></b>
         <br/><b>Click and drag</b> to pan, <b>mouse wheel</b> to zoom; <b>Q</b> and <b>E</e> to rotate card; <b>W</b> to move card to front/back.
         <br>Players: `;
-    
+
     Object.entries(state.G.players).forEach(([playerId, playerData]) => {
       let str = `Player ${playerId}`;
       if (playerId == this.client.playerID) {
-        str += ` (You)`
+        str += ` (You)`;
       }
       if (playerId == state.ctx.currentPlayer) {
         str = `<b>${str}</b>`;
@@ -51,20 +51,20 @@ export class MessageView {
       this.rootElement.innerHTML += str;
     });
 
-    document.getElementById('drawCard').onclick = (e) => {
+    document.getElementById('drawCard').onclick = e => {
       this.client.moves.drawCard();
-    }
+    };
 
-    document.getElementById('endTurn').onclick = (e) => {
+    document.getElementById('endTurn').onclick = e => {
       updateCardRotationsOnServer(this.client);
       this.client.moves.endTurn();
-    }
+    };
 
-    document.getElementById('undo').onclick = (e) => {
+    document.getElementById('undo').onclick = e => {
       this.client.undo();
-    }
+    };
 
-    document.getElementById('restart').onclick = async (e) => {
+    document.getElementById('restart').onclick = async e => {
       console.log('restart');
       const { protocol, hostname, port } = window.location;
       const server = `${protocol}//${hostname}:${port}`;
@@ -74,16 +74,16 @@ export class MessageView {
       const playerID = this.client.playerID;
       const credentials = this.client.credentials;
       console.log('credentials', credentials);
-      const { nextMatchID } = await lobbyClient.playAgain(GAME_NAME, matchID, {playerID, credentials});
+      const { nextMatchID } = await lobbyClient.playAgain(GAME_NAME, matchID, { playerID, credentials });
 
-      await lobbyClient.leaveMatch(GAME_NAME, matchID, {playerID, credentials});
+      await lobbyClient.leaveMatch(GAME_NAME, matchID, { playerID, credentials });
 
       const res = await lobbyClient.joinMatch(GAME_NAME, nextMatchID, {
         playerID: playerID,
-        playerName: `Player ${playerID}`
+        playerName: `Player ${playerID}`,
       });
 
       this.appView.restart(playerID, nextMatchID, res.playerCredentials);
-    }
+    };
   }
 }

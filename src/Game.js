@@ -1,7 +1,8 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 import { Card } from './Card';
 import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from './config';
-import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils'
+import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils';
+import { Rules } from './Rules';
 
 const MOVES_LIMIT = 1;
 const DRAWS_LIMIT = 1;
@@ -9,7 +10,7 @@ const DRAWS_LIMIT = 1;
 export const Game = {
   name: GAME_NAME,
 
-  setup: (ctx) => {
+  setup: ctx => {
     const G = {
       cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null),
       players: {},
@@ -17,8 +18,8 @@ export const Game = {
       started: false,
       zIndex: 0,
       movesLeft: MOVES_LIMIT,
-      drawsLeft: DRAWS_LIMIT
-    }
+      drawsLeft: DRAWS_LIMIT,
+    };
 
     // shuffle deck
     G.deck = ctx.random.Shuffle(G.deck);
@@ -28,17 +29,17 @@ export const Game = {
     const middleX = Math.floor(BOARD_WIDTH / 2);
     const middleY = Math.floor(BOARD_HEIGHT / 2);
     G.cells[middleY * BOARD_WIDTH + middleX] = G.deck.pop();
-    
+
     // draw cards to players
     for (let i = 0; i < ctx.numPlayers; i++) {
       const playerObj = {
         selectedCardIndex: 0,
-        cards: []
+        cards: [],
       };
       for (let n = 0; n < CARDS_PER_HAND; n++) {
         playerObj.cards.push(G.deck.pop());
       }
-      G.players[`${i}`] = playerObj
+      G.players[`${i}`] = playerObj;
     }
     return G;
   },
@@ -53,10 +54,29 @@ export const Game = {
 
     // TODO: rename
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
-      if (G.cells[cellIndex] !== null || G.movesLeft <= 0) {
+      if (G.movesLeft <= 0) {
+        if (typeof window !== 'undefined') {
+          window.alert('Nenhuma jogada restante!');
+        }
+
+        console.log('Jogada inválida: Nenhuma jogada restante!');
+
         return INVALID_MOVE;
       }
 
+      const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
+
+      if (!result.success) {
+        if (typeof window !== 'undefined') {
+          window.alert(result.error);
+        }
+
+        console.log(`Jogada inválida: ${result.error}`);
+
+        return INVALID_MOVE;
+      }
+
+      // update card and insert into board
       card.zIndex = zIndex;
       G.cells[cellIndex] = card;
       G.zIndex++;
@@ -91,7 +111,7 @@ export const Game = {
 
     setStarted: (G, ctx, value) => {
       G.started = value;
-    }
+    },
   },
 
   endIf: (G, ctx) => {
@@ -99,7 +119,7 @@ export const Game = {
     if (finished) {
       const player = ctx.currentPlayer;
       console.log('Winner: ', player);
-      return { winner: player }
+      return { winner: player };
     }
-  }
+  },
 };

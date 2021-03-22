@@ -16,7 +16,7 @@ export class Deck {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(deckImgElem, x * cardWidth, y * cardHeight, cardWidth, cardHeight, 0, 0, cardWidth, cardHeight);
       ctx.fill();
-  
+
       const imageData = canvas.toDataURL('image/png');
       this.imageData[id] = imageData;
 

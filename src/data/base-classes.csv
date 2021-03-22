@@ -1,0 +1,11 @@
+class,hierarchy,leftVar,leftClass,topVar,topClass,rightVar,rightClass,bottomVar,bottomClass
+Pessoa,,,,possui,Objeto,temFilho,Pessoa,frequenta,Loja
+Construtor,Pessoa,,,possui,Ferramenta,temFilho,Pessoa,frequenta,LojaConstrucao
+Músico,Pessoa,,,possui,Instrumento,temFilho,Pessoa,frequenta,LojaInstrumento
+Cor,,,,,,,,,
+Loja,,vende,Objeto,temDono,Pessoa,,,,
+LojaInstrumento,Loja,vende,Instrumento,temDono,Pessoa,,,,
+LojaConstrucao,Loja,vende,Ferramenta,temDono,Pessoa,,,,
+Objeto,,temCor,Cor,,,,,,
+Instrumento,Objeto,temCor,Cor,,,,,,
+Ferramenta,Objeto,temCor,Cor,fabrica,Objeto,,,,

@@ -1,6 +1,6 @@
-import createPanZoom from "panzoom";
-import { BOARD_HEIGHT, BOARD_WIDTH } from "./config";
-import { getCardAtBoardIndex, updateCardRotationsOnServer } from "./utils";
+import createPanZoom from 'panzoom';
+import { BOARD_HEIGHT, BOARD_WIDTH } from './config';
+import { getCardAtBoardIndex, updateCardRotationsOnServer } from './utils';
 
 export class BoardView {
   constructor(rootElement, client, deck) {
@@ -9,7 +9,7 @@ export class BoardView {
     this.deck = deck;
 
     this.createBoard();
-    this.attachListeners();    
+    this.attachListeners();
     this.createGhost();
 
     this.hasPanned = false;
@@ -18,14 +18,14 @@ export class BoardView {
       initialZoom: 1.0,
       maxZoom: 2.5,
       minZoom: 0.2,
-      beforeMouseDown: (e) => {
+      beforeMouseDown: e => {
         this.hasPanned = false;
         return false;
-      }
+      },
     });
     panzoom.moveTo(0, -400);
 
-    panzoom.on('panstart', () => this.hasPanned = true);
+    panzoom.on('panstart', () => (this.hasPanned = true));
   }
 
   createGhost() {
@@ -38,12 +38,12 @@ export class BoardView {
     this.cardGhost.id = 'ghost';
     this.cardGhost.src = undefined;
     this.invisibleElem.appendChild(this.cardGhost);
-    
+
     this.ghostZindex = 2;
 
     this.setGhostVisible(false);
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       if (e.code === 'KeyW') {
         this.switchGhostZindex();
       }
@@ -84,25 +84,25 @@ export class BoardView {
         this.ghostZindex = 1 + Math.abs(this.ghostZindex);
       }
     };
-    
+
     const cells = this.rootElement.querySelectorAll('.cell');
     cells.forEach(cell => {
       cell.onclick = handleCellClick;
 
       // move ghost card to cell
-      cell.onmouseover = (event) => {
+      cell.onmouseover = event => {
         if (!cell.hasChildNodes()) {
           cell.appendChild(this.cardGhost);
           this.setGhostZindex(this.ghostZindex);
         }
-      }
+      };
     });
 
     const board = this.rootElement.querySelector('.board');
-    board.onmouseout = (event) => {
+    board.onmouseout = event => {
       this.invisibleElem.innerHTML = '';
       this.invisibleElem.appendChild(this.cardGhost);
-    }
+    };
   }
 
   update(state) {
@@ -116,9 +116,14 @@ export class BoardView {
         const img = this.deck.getCardImageElem(card.id);
         // rotation
         img.style.transform = `rotate(${(card.rotation % 4) * 90}deg)`;
-        
+
         // drop shadow
-        const dropShadows = [[4, 4], [4, -4], [-4, -4], [-4, 4]];
+        const dropShadows = [
+          [4, 4],
+          [4, -4],
+          [-4, -4],
+          [-4, 4],
+        ];
         const dp = dropShadows[((card.rotation % 4) + 4) % 4];
         const filter = `drop-shadow(${dp[0]}px ${dp[1]}px 2px #333333)`;
         img.style.setProperty('filter', filter);

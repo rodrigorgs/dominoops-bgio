@@ -1,4 +1,4 @@
-export const GAME_NAME = "default";
+export const GAME_NAME = 'dominoops';
 
 export const BOARD_WIDTH = 11;
 export const BOARD_HEIGHT = 11;

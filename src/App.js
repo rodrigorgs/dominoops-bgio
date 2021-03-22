@@ -1,4 +1,4 @@
-import { SocketIO } from 'boardgame.io/multiplayer'
+import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client, LobbyClient } from 'boardgame.io/client';
 import { Game } from './Game';
 import { GAME_NAME, NUM_CARDS, CARD_WIDTH, CARD_HEIGHT, DECK_N_COLUMNS } from './config';
@@ -20,7 +20,7 @@ class App {
       multiplayer: SocketIO({ server }),
       playerID: playerId,
       credentials: credentials,
-      matchID: matchId
+      matchID: matchId,
     });
     this.client.start();
     this.client.subscribe(state => this.update(state));
@@ -60,11 +60,16 @@ SplashScreen(appElement).then(async choice => {
   if (choice.op == 'create') {
     playerId = '0';
     console.log('numPlayers', choice.numPlayers);
-    const res = await lobbyClient.createMatch(GAME_NAME, { numPlayers: choice.numPlayers });
+    const res = await lobbyClient.createMatch(GAME_NAME, {
+      numPlayers: choice.numPlayers,
+    });
     console.log('res', res);
     matchId = res.matchID;
     console.log(matchId);
-    const res2 = await lobbyClient.joinMatch(GAME_NAME, matchId, {playerID: playerId, playerName: playerId});
+    const res2 = await lobbyClient.joinMatch(GAME_NAME, matchId, {
+      playerID: playerId,
+      playerName: playerId,
+    });
     console.log('res2', res2);
     credentials = res2.playerCredentials;
   } else if (choice.op == 'join') {
@@ -73,12 +78,15 @@ SplashScreen(appElement).then(async choice => {
     console.log('players', match.players);
     playerId = match.players.find(player => player.isConnected === undefined).id.toString();
     console.log('playerId', playerId);
-    const res2 = await lobbyClient.joinMatch(GAME_NAME, matchId, {playerID: playerId, playerName: playerId});
+    const res2 = await lobbyClient.joinMatch(GAME_NAME, matchId, {
+      playerID: playerId,
+      playerName: playerId,
+    });
     credentials = res2.playerCredentials;
   } else {
     console.error('Invalid choice');
   }
-  
+
   if (choice.op == 'create' || choice.op == 'join') {
     new App(appElement, playerId, matchId, credentials);
   }
