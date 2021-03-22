@@ -15,6 +15,7 @@
   "dependencies": {
     "boardgame.io": "^0.43.2",
     "csv": "^5.3.2",
+    "dotenv": "^5.0.1",
     "esm": "^3.2.25",
     "koa-static": "^5.0.0",
     "panzoom": "^9.4.1"
