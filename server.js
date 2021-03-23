@@ -3,12 +3,17 @@ import serve from 'koa-static';
 
 require('dotenv').config();
 
-const { Server } = require('boardgame.io/server');
+const { Server, FlatFile } = require('boardgame.io/server');
 const { Game } = require('./src/Game');
 
 const { database } = require('./database');
 
-const server = Server({ games: [Game] });
+const server = Server({ games: [Game],
+  db: new FlatFile({
+    dir: '/tmp/dmn',
+    logging: true,
+  }),
+ });
 const PORT = process.env.PORT || 8000;
 
 // Build path relative to the server.js file
