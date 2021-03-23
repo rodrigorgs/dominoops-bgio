@@ -1,5 +1,5 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
-import { Card } from './Card';
+import { newCard } from './Card';
 import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from './config';
 import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils';
 import { Rules } from './Rules';
@@ -23,7 +23,7 @@ export const Game = {
 
     // shuffle deck
     G.deck = ctx.random.Shuffle(G.deck);
-    G.deck = G.deck.map(id => new Card(id, ctx.random.D4()));
+    G.deck = G.deck.map(id => newCard(id, ctx.random.D4()));
 
     // put card in the middle of the board
     const middleX = Math.floor(BOARD_WIDTH / 2);
