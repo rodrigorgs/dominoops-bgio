@@ -8,12 +8,7 @@ const { Game } = require('./src/Game');
 
 const { database } = require('./database');
 
-const server = Server({ games: [Game],
-  db: new FlatFile({
-    dir: '/tmp/dmn',
-    logging: true,
-  }),
- });
+const server = Server({ games: [Game], db: database });
 const PORT = process.env.PORT || 8000;
 
 // Build path relative to the server.js file

@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bgio-postgres": "^1.0.13",
     "boardgame.io": "^0.43.2",
     "csv": "^5.3.2",
     "dotenv": "^5.0.1",
