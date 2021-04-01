@@ -150,11 +150,16 @@ export class BoardView {
 
       // move ghost card to cell
       cell.onmouseover = event => {
-        if (!cell.hasChildNodes()) {
+        if (!cell.hasChildNodes() && this.currentPlayer == this.client.playerID) {
           cell.appendChild(this.cardGhost);
+          cell.style.border = 'dashed 1px #333';
           this.setGhostZindex(this.ghostZindex);
         }
       };
+      cell.onmouseout = event => {
+        cell.style.border = 'none';
+      }
+
     });
 
     const board = this.rootElement.querySelector('.board');
@@ -196,9 +201,6 @@ export class BoardView {
   }
 
   setGhostVisible(visible) {
-    if (this.currentPlayer != this.client.playerID) {
-      visible = false;
-    }
     this.cardGhost.style.display = visible ? 'block' : 'none';
   }
 
