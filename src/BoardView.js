@@ -133,7 +133,6 @@ export class BoardView {
     if (cell && !cell.hasChildNodes() && this.currentPlayer == this.client.playerID) {
       const validation = Rules.validateMove(this.client.getState().G, this.client.getState().ctx, cell.dataset.id, this.ghostZindex, this.selectedCard);
       const color = validation.success ? '#333' : 'red'
-      console.log(validation);
       cell.style.border = `dashed 1px ${color}`;
       this.lastCell = cell;
     }
@@ -228,7 +227,12 @@ export class BoardView {
   }
 
   onCardSelect(card) {
+    const didChangeCard = card != this.selectedCard && this.cardGhost;
     this.selectedCard = card;
+    this.cardGhost.style.transitionProperty = 'transform';
+
+    this.cardGhost.style.transitionDuration = didChangeCard ? '0ms' : '300ms';
+
     if (card) {
       const newSrc = this.deck.getCardImageElem(card.id).src;
       if (this.cardGhost.src !== newSrc) {
