@@ -2,6 +2,7 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 import { transform } from 'csv';
 import createPanZoom from 'panzoom';
 import { BOARD_HEIGHT, BOARD_WIDTH, CARD_HEIGHT, CARD_WIDTH } from './config';
+import { Rules } from './Rules';
 import { getCardAtBoardIndex, toastRed, updateCardRotationsOnServer } from './utils';
 
 export class BoardView {
@@ -10,6 +11,7 @@ export class BoardView {
     this.client = client;
     this.deck = deck;
     this.currentPlayer = undefined;
+    this.lastCell = undefined;
 
     this.createBoard();
     this.createGhost();
@@ -99,6 +101,7 @@ export class BoardView {
     document.addEventListener('keydown', e => {
       if (e.code === 'KeyF') {
         this.switchGhostZindex();
+        this.updateCellBorder(this.lastCell);
       }
     });
   }
@@ -124,6 +127,16 @@ export class BoardView {
     this.rootElement.innerHTML = `
       <div class="board">d\n${cells.join('\n')}\n</div>
     `;
+  }
+
+  updateCellBorder(cell) {
+    if (cell && !cell.hasChildNodes() && this.currentPlayer == this.client.playerID) {
+      const validation = Rules.validateMove(this.client.getState().G, this.client.getState().ctx, cell.dataset.id, this.ghostZindex, this.selectedCard);
+      const color = validation.success ? '#333' : 'red'
+      console.log(validation);
+      cell.style.border = `dashed 1px ${color}`;
+      this.lastCell = cell;
+    }
   }
 
   attachListeners() {
@@ -153,17 +166,19 @@ export class BoardView {
     }
 
     const cells = this.rootElement.querySelectorAll('.cell');
+    let lastCell = undefined;
     cells.forEach(cell => {
       cell.onclick = handleCellClick;
 
       // draw border
       cell.onmouseover = event => {
-        if (!cell.hasChildNodes() && this.currentPlayer == this.client.playerID) {
-          cell.style.border = 'dashed 1px #333';
+        if (cell != this.lastCell) {
+          this.updateCellBorder(cell);
         }
       };
       cell.onmouseout = event => {
         cell.style.border = 'none';
+        this.lastCell = undefined;
       }
 
     });
@@ -223,5 +238,7 @@ export class BoardView {
     } else {
       this.cardGhost.src = null;
     }
+
+    this.updateCellBorder(this.lastCell);
   }
 }
