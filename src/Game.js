@@ -88,9 +88,11 @@ export const Game = {
       }
 
       toast('Você concluiu sua jogada');
+      G.movesLeft--;
+
+      G.movesLeft = MOVES_LIMIT;
       ctx.events.endTurn();
 
-      G.movesLeft--;
       // G.lastValidMove = 'clickCell';
       // ctx.events.endTurn();
     },
