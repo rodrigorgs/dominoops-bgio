@@ -9,7 +9,36 @@ export class MessageView {
     this.client = client;
     this.appView = appView;
     this.isPlayersTurn = false;
+    this.lastProcessedLogIndex = -1;
     console.log('appView', appView);
+  }
+
+
+  processLogItem(item) {
+    if (item.action.type == 'MAKE_MOVE') {
+      const movePlayerID = item.action.payload.playerID;
+      const isThisPlayersMove = movePlayerID == this.client.playerID;
+
+      if (!isThisPlayersMove) {
+        const move = item.action.payload.type;
+        if (move == 'drawCard') {
+          toast(`Player ${movePlayerID} cavou uma carta`);
+        } else if (move == 'clickCell') {
+          toast(`Player ${movePlayerID} jogou uma carta`);
+        } else if (move == 'endTurn') {
+          toast(`Player ${movePlayerID} passou a vez`);
+        }
+      }
+    }
+  }
+
+  processLog(log) {
+    let i = this.lastProcessedLogIndex + 1;
+    for ( ; i < log.length; i++) {
+      this.processLogItem(log[i]);
+    }
+
+    this.lastProcessedLogIndex = log.length - 1;
   }
 
   update(state) {
@@ -23,16 +52,8 @@ export class MessageView {
     if (!werePlayersTurn && this.isPlayersTurn) {
       toast('É a sua vez!');
     }
-
-    // if (!this.isPlayersTurn) {
-    //   if (state.G.lastValidMove == 'endTurn') {
-    //     toast(`Player ${state.ctx.currentPlayer} passou a vez`);
-    //   } else if (state.G.lastValidMove == 'drawCard') {
-    //     toast(`Player ${state.ctx.currentPlayer} cavou uma carta`);
-    //   } else if (state.G.lastValidMove == 'clickCell') {
-    //     toast(`Player ${state.ctx.currentPlayer} jogou uma carta`);
-    //   }
-    // }
+    
+    this.processLog(this.client.log);
 
     this.rootElement.innerHTML = ``;
     if (state.ctx.gameover) {
