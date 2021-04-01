@@ -20,13 +20,13 @@ export class MessageView {
     if (state.ctx.gameover) {
       this.rootElement.innerHTML += `<span style="font-weight: bold; color: red">Player ${state.ctx.gameover.winner} wins!</span>`;
     }
+    // <button id="undo" style="font-weight: ${state.G.movesLeft == 0 ? 'bold' : 'normal'}">Undo</button>
     this.rootElement.innerHTML += `
         <button id="restart" style="display: ${state.ctx.gameover ? 'inline' : 'none'}">Play again</button>
         <span style="display: ${playerTurn ? 'inline' : 'none'}">
           <span style="color: blue; font-weight: bold;">It's your turn!</span>
           <button id="drawCard" ${state.G.drawsLeft == 0 || state.G.movesLeft == 0 ? 'disabled' : ''}>Draw card</button>
           <button id="endTurn" style="font-weight: ${state.G.movesLeft == 0 ? 'bold' : 'normal'}">End turn</button>
-          <button id="undo" style="font-weight: ${state.G.movesLeft == 0 ? 'bold' : 'normal'}">Undo</button>
         </span>
         <span style="display: ${!playerTurn ? 'inline' : 'none'}">
           <span style="color: red">Wait, it's player ${state.ctx.currentPlayer}'s turn.</span>
@@ -60,9 +60,9 @@ export class MessageView {
       this.client.moves.endTurn();
     };
 
-    document.getElementById('undo').onclick = e => {
-      this.client.undo();
-    };
+    // document.getElementById('undo').onclick = e => {
+    //   this.client.undo();
+    // };
 
     document.getElementById('restart').onclick = async e => {
       console.log('restart');
