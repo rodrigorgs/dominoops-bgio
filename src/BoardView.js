@@ -41,9 +41,9 @@ export class BoardView {
 
     let lastTimeStamp = undefined;
     const performPan = (timestamp) => {
-      let deltaTime = 1;
+      let deltaTime;
       if (lastTimeStamp) {
-        deltaTime = timestamp - lastTimeStamp;
+        deltaTime = Math.min(timestamp - lastTimeStamp, 30.0);
       } else {
         deltaTime = 16.66;
       }
