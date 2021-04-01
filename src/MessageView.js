@@ -3,6 +3,17 @@ import Toastify from 'toastify-js';
 import { GAME_NAME } from './config';
 import { getClientCards, updateCardRotationsOnServer } from './utils';
 
+function toast(message) {
+  Toastify({
+    text: message,
+    duration: 3000,
+    style: {background: 'green' },
+    position: 'center',
+    gravity: 'bottom',
+    close: true,
+    className: 'mytoast'
+  }).showToast();
+}
 export class MessageView {
   constructor(rootElement, client, appView) {
     this.rootElement = rootElement;
@@ -21,16 +32,18 @@ export class MessageView {
     this.isPlayersTurn = state.ctx.currentPlayer == this.client.playerID;
 
     if (!werePlayersTurn && this.isPlayersTurn) {
-      Toastify({
-        text: 'É sua vez!',
-        duration: 5000,
-        style: {background: 'green' },
-        position: 'center',
-        gravity: 'bottom',
-        close: true,
-        className: 'mytoast'
-      }).showToast();
+      toast('É a sua vez!');
     }
+
+    // if (!this.isPlayersTurn) {
+    //   if (state.G.lastValidMove == 'endTurn') {
+    //     toast(`Player ${state.ctx.currentPlayer} passou a vez`);
+    //   } else if (state.G.lastValidMove == 'drawCard') {
+    //     toast(`Player ${state.ctx.currentPlayer} cavou uma carta`);
+    //   } else if (state.G.lastValidMove == 'clickCell') {
+    //     toast(`Player ${state.ctx.currentPlayer} jogou uma carta`);
+    //   }
+    // }
 
     this.rootElement.innerHTML = ``;
     if (state.ctx.gameover) {

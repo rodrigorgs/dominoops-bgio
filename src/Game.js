@@ -30,6 +30,7 @@ export const Game = {
   setup: ctx => {
 
     const G = {
+      // lastValidMove: '',
       cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null),
       players: {},
       deck: [...Array(NUM_CARDS).keys()],
@@ -75,6 +76,7 @@ export const Game = {
       if (G.movesLeft <= 0) {
         toast('Nenhuma jogada restante!')
         console.log('Jogada inválida: Nenhuma jogada restante!');
+        // G.lastValidMove = '';
         return INVALID_MOVE;
       }
 
@@ -83,6 +85,7 @@ export const Game = {
       if (!result.success) {
         toast(result.error);
         console.log(`Jogada inválida: ${result.error}`);
+        // G.lastValidMove = '';
         return INVALID_MOVE;
       }
 
@@ -102,6 +105,7 @@ export const Game = {
       ctx.events.endTurn();
 
       G.movesLeft--;
+      // G.lastValidMove = 'clickCell';
       // ctx.events.endTurn();
     },
 
@@ -111,6 +115,7 @@ export const Game = {
 
       toast('Você passou a vez', { style: { background: 'darkgreen' } });
       ctx.events.endTurn();
+      // G.lastValidMove = 'endTurn';
     },
 
     drawCard: (G, ctx) => {
@@ -118,10 +123,15 @@ export const Game = {
         getCurrentPlayerCards(G, ctx).push(G.deck.pop());
         G.drawsLeft--;
         toast('Você cavou uma carta', { style: { background: 'darkgreen' } });
+        // G.lastValidMove = 'drawCard';
       } else if (G.deck.length == 0) {
         toast('Não há mais cartas no monte');
+        // G.lastValidMove = '';
+        return INVALID_MOVE;
       } else if (G.drawsLeft == 0) {
         toast('Você já cavou uma vez. Jogue uma carta ou passe a vez.');
+        // G.lastValidMove = '';
+        return INVALID_MOVE;
       }
     },
 
