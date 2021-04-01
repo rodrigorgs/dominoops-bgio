@@ -139,11 +139,12 @@ export class BoardView {
         cell.appendChild(img);
       }
     });
-
-    this.setGhostVisible(state.ctx.currentPlayer == this.client.playerID);
   }
 
   setGhostVisible(visible) {
+    if (this.currentPlayer != this.client.playerID) {
+      visible = false;
+    }
     this.cardGhost.style.display = visible ? 'block' : 'none';
   }
 
