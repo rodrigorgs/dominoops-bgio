@@ -104,7 +104,7 @@ export const Rules = {
   verifyCardConnections: (G, cellIndex) => {
     const sideCells = Rules.getSideCells(G, cellIndex);
 
-    const error = 'Você só pode conectar sua carta a uma carta que está uma das pontas (i.e., uma carta conectada a no máximo uma outra carta)';
+    const error = 'A carta adjacente deve ser uma ponta';
 
     if (sideCells.length > 1) {
       return {
