@@ -50,7 +50,7 @@ export class MessageView {
         <span style="display: ${!this.isPlayersTurn ? 'inline' : 'none'}">
           <span style="color: red">Espere, está na vez do Player ${state.ctx.currentPlayer}.</span>
         </span>
-        <br>CONTROLES: <b>Clicar e arrastar</b>: mover a mesa, <b>roda do mouse</b>: zoom; <b>Q</b>/<b>E</b>: girar carta; <b>W</b>: mover a carta para cima/baixo da carta vizinha.
+        <br>CONTROLES: <b>W/A/S/D</b>: mover a mesa, <b>roda do mouse</b>: zoom; <b>Q</b>/<b>E</b>: girar carta; <b>F</b>: mover a carta para cima/baixo da carta vizinha.
         <br>JOGADORES: `;
 
     Object.entries(state.G.players).forEach(([playerId, playerData]) => {

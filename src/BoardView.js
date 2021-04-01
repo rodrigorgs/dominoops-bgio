@@ -14,7 +14,7 @@ export class BoardView {
     this.createGhost();
 
     this.hasPanned = false;
-    const panzoom = createPanZoom(document.querySelector('.board'), {
+    this.panzoom = createPanZoom(document.querySelector('.board'), {
       zoomDoubleClickSpeed: 1, // disable double click
       initialZoom: 1.0,
       maxZoom: 2.5,
@@ -24,9 +24,63 @@ export class BoardView {
         return false;
       },
     });
-    panzoom.moveTo(0, -400);
+    this.panzoom.moveTo(0, -400);
 
-    panzoom.on('panstart', () => (this.hasPanned = true));
+    this.panzoom.on('panstart', () => (this.hasPanned = true));
+
+    this.configureKeyboardPanning();
+  }
+
+  configureKeyboardPanning() {
+    let dx = 0;
+    let dy = 0;
+    const speed = 8 / 16.0;
+    const keyState = {KeyA: false, KeyS: false, KeyD: false, KeyW: false};
+
+    let lastTimeStamp = undefined;
+    const performPan = (timestamp) => {
+      let deltaTime = 1;
+      if (lastTimeStamp) {
+        deltaTime = timestamp - lastTimeStamp;
+      } else {
+        deltaTime = 16.66;
+      }
+      lastTimeStamp = timestamp;
+
+      console.log(timestamp)
+      this.panzoom.moveBy(dx * speed * deltaTime, dy * speed * deltaTime);
+      if (dx != 0 || dy != 0) {
+        window.requestAnimationFrame(performPan);
+      }
+    };
+    const updateDxDy = () => {
+      console.log(1);
+      dx = 0;
+      dy = 0;
+      if (keyState.KeyA) dx += 1;
+      if (keyState.KeyD) dx -= 1;
+      if (keyState.KeyS) dy -= 1;
+      if (keyState.KeyW) dy += 1;
+
+      if (dx != 0 || dy != 0) {
+        window.requestAnimationFrame(performPan);
+      } else {
+        lastTimeStamp = undefined;
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.code in keyState) {
+        keyState[e.code] = true;
+      }
+      updateDxDy();
+    });
+    document.addEventListener('keyup', e => {
+      if (e.code in keyState) {
+        keyState[e.code] = false;
+      }
+      updateDxDy();
+    });
   }
 
   createGhost() {
@@ -45,7 +99,7 @@ export class BoardView {
     this.setGhostVisible(false);
 
     document.addEventListener('keydown', e => {
-      if (e.code === 'KeyW') {
+      if (e.code === 'KeyF') {
         this.switchGhostZindex();
       }
     });
