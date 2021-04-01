@@ -1,5 +1,7 @@
+import { INVALID_MOVE } from 'boardgame.io/core';
+import { transform } from 'csv';
 import createPanZoom from 'panzoom';
-import { BOARD_HEIGHT, BOARD_WIDTH } from './config';
+import { BOARD_HEIGHT, BOARD_WIDTH, CARD_HEIGHT, CARD_WIDTH } from './config';
 import { getCardAtBoardIndex, toastRed, updateCardRotationsOnServer } from './utils';
 
 export class BoardView {
@@ -10,8 +12,8 @@ export class BoardView {
     this.currentPlayer = undefined;
 
     this.createBoard();
-    this.attachListeners();
     this.createGhost();
+    // this.attachListeners();
 
     this.hasPanned = false;
     this.panzoom = createPanZoom(document.querySelector('.board'), {
@@ -47,14 +49,12 @@ export class BoardView {
       }
       lastTimeStamp = timestamp;
 
-      console.log(timestamp)
       this.panzoom.moveBy(dx * speed * deltaTime, dy * speed * deltaTime);
       if (dx != 0 || dy != 0) {
         window.requestAnimationFrame(performPan);
       }
     };
     const updateDxDy = () => {
-      console.log(1);
       dx = 0;
       dy = 0;
       if (keyState.KeyA) dx += 1;
@@ -86,17 +86,15 @@ export class BoardView {
   createGhost() {
     this.selectedCard = null;
 
-    this.invisibleElem = document.createElement('div');
-    this.invisibleElem.style.display = 'none';
-
     this.cardGhost = document.createElement('img');
     this.cardGhost.id = 'ghost';
     this.cardGhost.src = undefined;
-    this.invisibleElem.appendChild(this.cardGhost);
+    this.rootElement.querySelector('.board').appendChild(this.cardGhost);
 
     this.ghostZindex = 2;
 
     this.setGhostVisible(false);
+    this.setGhostZindex(this.ghostZindex);
 
     document.addEventListener('keydown', e => {
       if (e.code === 'KeyF') {
@@ -110,9 +108,7 @@ export class BoardView {
   }
   setGhostZindex(zindex) {
     this.ghostZindex = zindex;
-    if (this.cardGhost && this.cardGhost.parentElement.className == 'cell') {
-      this.cardGhost.parentElement.style.zIndex = 500 + zindex;
-    }
+    this.cardGhost.style.zIndex = 500 + zindex;
   }
 
   createBoard() {
@@ -126,7 +122,7 @@ export class BoardView {
     }
 
     this.rootElement.innerHTML = `
-      <div class="board">\n${cells.join('\n')}\n</div>
+      <div class="board">d\n${cells.join('\n')}\n</div>
     `;
   }
 
@@ -136,7 +132,10 @@ export class BoardView {
         const id = parseInt(event.target.dataset.id);
         updateCardRotationsOnServer(this.client);
         if (this.currentPlayer == this.client.playerID) {
-          this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
+          const ret = this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
+          if (ret != INVALID_MOVE) {
+            this.setGhostVisible(false);
+          }
           this.ghostZindex = 1 + Math.abs(this.ghostZindex);
         } else {
           toastRed('Não está na sua vez!');
@@ -144,16 +143,23 @@ export class BoardView {
       }
     };
 
+    this.rootElement.onmousemove = e => {
+      const transform = this.panzoom.getTransform();
+      let x = (e.clientX - transform.x) / transform.scale;
+      let y = (e.clientY - transform.y) / transform.scale;
+
+      this.cardGhost.style.left = `${x - CARD_WIDTH / 4}px`;
+      this.cardGhost.style.top = `${y - CARD_HEIGHT / 4}px`;
+    }
+
     const cells = this.rootElement.querySelectorAll('.cell');
     cells.forEach(cell => {
       cell.onclick = handleCellClick;
 
-      // move ghost card to cell
+      // draw border
       cell.onmouseover = event => {
         if (!cell.hasChildNodes() && this.currentPlayer == this.client.playerID) {
-          cell.appendChild(this.cardGhost);
           cell.style.border = 'dashed 1px #333';
-          this.setGhostZindex(this.ghostZindex);
         }
       };
       cell.onmouseout = event => {
@@ -161,16 +167,17 @@ export class BoardView {
       }
 
     });
-
-    const board = this.rootElement.querySelector('.board');
-    board.onmouseout = event => {
-      this.invisibleElem.innerHTML = '';
-      this.invisibleElem.appendChild(this.cardGhost);
-    };
   }
 
   update(state) {
     this.currentPlayer = state.ctx.currentPlayer;
+
+    if (this.currentPlayer == this.client.playerID) {
+      this.setGhostVisible(true);
+      this.attachListeners();
+    } else {
+      this.setGhostVisible(false);
+    }
 
     // update board
     const cellElems = Array.from(document.querySelectorAll('.cell'));
@@ -212,10 +219,8 @@ export class BoardView {
         this.cardGhost.src = newSrc;
       }
       this.cardGhost.style.transform = `rotate(${card.rotation * 90}deg)`;
-      this.setGhostVisible(true);
     } else {
       this.cardGhost.src = null;
-      this.setGhostVisible(false);
     }
   }
 }
