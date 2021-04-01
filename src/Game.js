@@ -4,13 +4,29 @@ import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from 
 import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils';
 import { Rules } from './Rules';
 
+import Toastify from 'toastify-js'
+
 const MOVES_LIMIT = 1;
 const DRAWS_LIMIT = 1;
+
+function toast(message) {
+  if (typeof window !== 'undefined') {
+    Toastify({
+      text: message,
+      duration: 5000,
+      position: 'center',
+      gravity: 'bottom',
+      close: true,
+      className: 'mytoast'
+    }).showToast();
+  }
+}
 
 export const Game = {
   name: GAME_NAME,
 
   setup: ctx => {
+
     const G = {
       cells: Array(BOARD_HEIGHT * BOARD_WIDTH).fill(null),
       players: {},
@@ -55,9 +71,7 @@ export const Game = {
     // TODO: rename
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
       if (G.movesLeft <= 0) {
-        if (typeof window !== 'undefined') {
-          window.alert('Nenhuma jogada restante!');
-        }
+        toast('Nenhuma jogada restante!')
 
         console.log('Jogada inválida: Nenhuma jogada restante!');
 
@@ -67,9 +81,7 @@ export const Game = {
       const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
 
       if (!result.success) {
-        if (typeof window !== 'undefined') {
-          window.alert(result.error);
-        }
+        toast(result.error);
 
         console.log(`Jogada inválida: ${result.error}`);
 
