@@ -1,9 +1,12 @@
+import image from './hierarchy.png';
+
 function appendNewTag(rootElement, tagname, text) {
   const elem = document.createElement(tagname);
   if (text !== undefined) {
     elem.innerText = text;
   }
   rootElement.appendChild(elem);
+  return elem;
 }
 
 export function SplashScreen(rootElement) {
@@ -38,5 +41,12 @@ export function SplashScreen(rootElement) {
     joinButton.textContent = 'Entrar na sala';
     joinButton.onclick = () => resolve({ op: 'join', room: joinField.value });
     rootElement.appendChild(joinButton);
+
+    rootElement.appendChild(document.createElement('hr'));
+    appendNewTag(rootElement, 'h1', 'Tipos de cartas');
+
+    const img = appendNewTag(rootElement, 'img');
+    img.src = image;
+    img.width = '561';
   });
 }
