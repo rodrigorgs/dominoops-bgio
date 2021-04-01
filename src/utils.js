@@ -1,5 +1,24 @@
+import toastify from 'toastify-js';
 import { BOARD_WIDTH, BOARD_HEIGHT } from './config';
 
+export function toast(message, properties = {}) {
+  if (typeof window !== 'undefined') {
+    toastify({
+      text: message,
+      duration: 3000,
+      style: { background: 'darkGreen' },
+      position: 'center',
+      gravity: 'bottom',
+      close: true,
+      className: 'mytoast',
+      ...properties
+    }).showToast();
+  }
+}
+
+export function toastRed(message, properties = {}) {
+  toast(message, { style: { background: 'darkRed' }, ...properties },)
+}
 // TODO: extract class
 
 export function updateCardRotationsOnServer(client) {

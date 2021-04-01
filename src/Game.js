@@ -3,26 +3,12 @@ import { Card } from './Card';
 import { GAME_NAME, BOARD_WIDTH, BOARD_HEIGHT, NUM_CARDS, CARDS_PER_HAND } from './config';
 import { getCurrentPlayerCards, getCurrentPlayerSelectedCard, getCurrentPlayerSelectedCardIndex, setCurrentPlayerSelectedCardIndex } from './utils';
 import { Rules } from './Rules';
+import { toast, toastRed } from './utils';
 
 import Toastify from 'toastify-js'
 
 const MOVES_LIMIT = 1;
 const DRAWS_LIMIT = 1;
-
-function toast(message, properties = {}) {
-  if (typeof window !== 'undefined') {
-    Toastify({
-      text: message,
-      duration: 5000,
-      style: {background: 'darkred' },
-      position: 'center',
-      gravity: 'bottom',
-      close: true,
-      className: 'mytoast',
-      ...properties
-    }).showToast();
-  }
-}
 
 export const Game = {
   name: GAME_NAME,
@@ -74,7 +60,7 @@ export const Game = {
     // TODO: rename
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
       if (G.movesLeft <= 0) {
-        toast('Nenhuma jogada restante!')
+        toastRed('Nenhuma jogada restante!')
         console.log('Jogada inválida: Nenhuma jogada restante!');
         // G.lastValidMove = '';
         return INVALID_MOVE;
@@ -83,7 +69,7 @@ export const Game = {
       const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
 
       if (!result.success) {
-        toast(result.error);
+        toastRed(result.error);
         console.log(`Jogada inválida: ${result.error}`);
         // G.lastValidMove = '';
         return INVALID_MOVE;
@@ -101,7 +87,7 @@ export const Game = {
         hand.splice(i, 1);
       }
 
-      toast('Você concluiu sua jogada', { style: { background: 'darkgreen' } });
+      toast('Você concluiu sua jogada');
       ctx.events.endTurn();
 
       G.movesLeft--;
@@ -113,7 +99,7 @@ export const Game = {
       G.movesLeft = MOVES_LIMIT;
       G.drawsLeft = DRAWS_LIMIT;
 
-      toast('Você passou a vez', { style: { background: 'darkgreen' } });
+      toast('Você passou a vez');
       ctx.events.endTurn();
       // G.lastValidMove = 'endTurn';
     },
@@ -122,7 +108,7 @@ export const Game = {
       if (G.deck.length > 0 && G.drawsLeft >= 0 && G.movesLeft >= 0) {
         getCurrentPlayerCards(G, ctx).push(G.deck.pop());
         G.drawsLeft--;
-        toast('Você cavou uma carta', { style: { background: 'darkgreen' } });
+        toast('Você cavou uma carta');
         // G.lastValidMove = 'drawCard';
       } else if (G.deck.length == 0) {
         toast('Não há mais cartas no monte');

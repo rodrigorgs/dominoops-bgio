@@ -1,19 +1,8 @@
 import { LobbyClient } from 'boardgame.io/client';
-import Toastify from 'toastify-js';
+import { toast } from './utils'
 import { GAME_NAME } from './config';
 import { getClientCards, updateCardRotationsOnServer } from './utils';
 
-function toast(message) {
-  Toastify({
-    text: message,
-    duration: 3000,
-    style: {background: 'green' },
-    position: 'center',
-    gravity: 'bottom',
-    close: true,
-    className: 'mytoast'
-  }).showToast();
-}
 export class MessageView {
   constructor(rootElement, client, appView) {
     this.rootElement = rootElement;

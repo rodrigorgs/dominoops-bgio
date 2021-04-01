@@ -1,12 +1,13 @@
 import createPanZoom from 'panzoom';
 import { BOARD_HEIGHT, BOARD_WIDTH } from './config';
-import { getCardAtBoardIndex, updateCardRotationsOnServer } from './utils';
+import { getCardAtBoardIndex, toastRed, updateCardRotationsOnServer } from './utils';
 
 export class BoardView {
   constructor(rootElement, client, deck) {
     this.rootElement = rootElement;
     this.client = client;
     this.deck = deck;
+    this.currentPlayer = undefined;
 
     this.createBoard();
     this.attachListeners();
@@ -80,8 +81,12 @@ export class BoardView {
       if (!this.hasPanned && this.selectedCard) {
         const id = parseInt(event.target.dataset.id);
         updateCardRotationsOnServer(this.client);
-        this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
-        this.ghostZindex = 1 + Math.abs(this.ghostZindex);
+        if (this.currentPlayer == this.client.playerID) {
+          this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
+          this.ghostZindex = 1 + Math.abs(this.ghostZindex);
+        } else {
+          toastRed('Não está na sua vez!');
+        }
       }
     };
 
@@ -106,6 +111,8 @@ export class BoardView {
   }
 
   update(state) {
+    this.currentPlayer = state.ctx.currentPlayer;
+
     // update board
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     cellElems.forEach((cell, index) => {
@@ -132,6 +139,8 @@ export class BoardView {
         cell.appendChild(img);
       }
     });
+
+    this.setGhostVisible(state.ctx.currentPlayer == this.client.playerID);
   }
 
   setGhostVisible(visible) {
