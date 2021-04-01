@@ -135,8 +135,8 @@ export class BoardView {
           const ret = this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
           if (ret != INVALID_MOVE) {
             this.setGhostVisible(false);
+            this.ghostZindex = 1 + Math.abs(this.ghostZindex);
           }
-          this.ghostZindex = 1 + Math.abs(this.ghostZindex);
         } else {
           toastRed('Não está na sua vez!');
         }
@@ -174,6 +174,7 @@ export class BoardView {
 
     if (this.currentPlayer == this.client.playerID) {
       this.setGhostVisible(true);
+      this.setGhostZindex(this.ghostZindex);
       this.attachListeners();
     } else {
       this.setGhostVisible(false);
