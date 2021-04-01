@@ -9,15 +9,17 @@ import Toastify from 'toastify-js'
 const MOVES_LIMIT = 1;
 const DRAWS_LIMIT = 1;
 
-function toast(message) {
+function toast(message, properties = {}) {
   if (typeof window !== 'undefined') {
     Toastify({
       text: message,
       duration: 5000,
+      style: {background: 'darkred' },
       position: 'center',
       gravity: 'bottom',
       close: true,
-      className: 'mytoast'
+      className: 'mytoast',
+      ...properties
     }).showToast();
   }
 }
@@ -72,9 +74,7 @@ export const Game = {
     clickCell: (G, ctx, cellIndex, zIndex, card) => {
       if (G.movesLeft <= 0) {
         toast('Nenhuma jogada restante!')
-
         console.log('Jogada inválida: Nenhuma jogada restante!');
-
         return INVALID_MOVE;
       }
 
@@ -82,9 +82,7 @@ export const Game = {
 
       if (!result.success) {
         toast(result.error);
-
         console.log(`Jogada inválida: ${result.error}`);
-
         return INVALID_MOVE;
       }
 
@@ -100,6 +98,9 @@ export const Game = {
         hand.splice(i, 1);
       }
 
+      toast('Você concluiu sua jogada', { style: { background: 'darkgreen' } });
+      ctx.events.endTurn();
+
       G.movesLeft--;
       // ctx.events.endTurn();
     },
@@ -107,6 +108,8 @@ export const Game = {
     endTurn: (G, ctx) => {
       G.movesLeft = MOVES_LIMIT;
       G.drawsLeft = DRAWS_LIMIT;
+
+      toast('Você passou a vez', { style: { background: 'darkgreen' } });
       ctx.events.endTurn();
     },
 
@@ -114,6 +117,11 @@ export const Game = {
       if (G.deck.length > 0 && G.drawsLeft >= 0 && G.movesLeft >= 0) {
         getCurrentPlayerCards(G, ctx).push(G.deck.pop());
         G.drawsLeft--;
+        toast('Você cavou uma carta', { style: { background: 'darkgreen' } });
+      } else if (G.deck.length == 0) {
+        toast('Não há mais cartas no monte');
+      } else if (G.drawsLeft == 0) {
+        toast('Você já cavou uma vez. Jogue uma carta ou passe a vez.');
       }
     },
 
