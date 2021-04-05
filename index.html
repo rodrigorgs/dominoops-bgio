@@ -3,8 +3,15 @@
 <head>
   <title>Dominoops</title>
   <meta charset="utf-8" />
-
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .mytoast {
+      z-index: 5000;
+      position: absolute;
+    }
     .board {
       display: grid;
       grid-template-rows: repeat(11, 140px);
@@ -36,7 +43,7 @@
       display: none;
     }
     #hand:before {
-      content: "Your cards";
+      content: "Suas cartas";
       font-size: 26px;
       font-weight: bold;
     }
@@ -50,14 +57,15 @@
     }
 
     #ghost {
+      position: absolute;
       filter: brightness(0.7) sepia(30%);
       width: 200px;
       height: 200px;
       pointer-events: none;
     }
 
-    #ghost, #hand img {
-      transition: transform 300ms; /* TODO: doesn't work because cards are updated */
+    #hand img {
+      transition: transform 300ms;
     }
 
   </style>

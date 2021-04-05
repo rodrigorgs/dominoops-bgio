@@ -1,19 +1,24 @@
+import { INVALID_MOVE } from 'boardgame.io/core';
+import { transform } from 'csv';
 import createPanZoom from 'panzoom';
-import { BOARD_HEIGHT, BOARD_WIDTH } from './config';
-import { getCardAtBoardIndex, updateCardRotationsOnServer } from './utils';
+import { BOARD_HEIGHT, BOARD_WIDTH, CARD_HEIGHT, CARD_WIDTH } from './config';
+import { Rules } from './Rules';
+import { getCardAtBoardIndex, toastRed, updateCardRotationsOnServer } from './utils';
 
 export class BoardView {
   constructor(rootElement, client, deck) {
     this.rootElement = rootElement;
     this.client = client;
     this.deck = deck;
+    this.currentPlayer = undefined;
+    this.lastCell = undefined;
 
     this.createBoard();
-    this.attachListeners();
     this.createGhost();
+    // this.attachListeners();
 
     this.hasPanned = false;
-    const panzoom = createPanZoom(document.querySelector('.board'), {
+    this.panzoom = createPanZoom(document.querySelector('.board'), {
       zoomDoubleClickSpeed: 1, // disable double click
       initialZoom: 1.0,
       maxZoom: 2.5,
@@ -23,29 +28,80 @@ export class BoardView {
         return false;
       },
     });
-    panzoom.moveTo(0, -400);
+    this.panzoom.moveTo(0, -400);
 
-    panzoom.on('panstart', () => (this.hasPanned = true));
+    this.panzoom.on('panstart', () => (this.hasPanned = true));
+
+    this.configureKeyboardPanning();
+  }
+
+  configureKeyboardPanning() {
+    let dx = 0;
+    let dy = 0;
+    const speed = 8 / 16.0;
+    const keyState = {KeyA: false, KeyS: false, KeyD: false, KeyW: false};
+
+    let lastTimeStamp = undefined;
+    const performPan = (timestamp) => {
+      let deltaTime;
+      if (lastTimeStamp) {
+        deltaTime = Math.min(timestamp - lastTimeStamp, 30.0);
+      } else {
+        deltaTime = 16.66;
+      }
+      lastTimeStamp = timestamp;
+
+      this.panzoom.moveBy(dx * speed * deltaTime, dy * speed * deltaTime);
+      if (dx != 0 || dy != 0) {
+        window.requestAnimationFrame(performPan);
+      }
+    };
+    const updateDxDy = () => {
+      dx = 0;
+      dy = 0;
+      if (keyState.KeyA) dx += 1;
+      if (keyState.KeyD) dx -= 1;
+      if (keyState.KeyS) dy -= 1;
+      if (keyState.KeyW) dy += 1;
+
+      if (dx != 0 || dy != 0) {
+        window.requestAnimationFrame(performPan);
+      } else {
+        lastTimeStamp = undefined;
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.code in keyState) {
+        keyState[e.code] = true;
+      }
+      updateDxDy();
+    });
+    document.addEventListener('keyup', e => {
+      if (e.code in keyState) {
+        keyState[e.code] = false;
+      }
+      updateDxDy();
+    });
   }
 
   createGhost() {
     this.selectedCard = null;
 
-    this.invisibleElem = document.createElement('div');
-    this.invisibleElem.style.display = 'none';
-
     this.cardGhost = document.createElement('img');
     this.cardGhost.id = 'ghost';
     this.cardGhost.src = undefined;
-    this.invisibleElem.appendChild(this.cardGhost);
+    this.rootElement.querySelector('.board').appendChild(this.cardGhost);
 
     this.ghostZindex = 2;
 
     this.setGhostVisible(false);
+    this.setGhostZindex(this.ghostZindex);
 
     document.addEventListener('keydown', e => {
-      if (e.code === 'KeyW') {
+      if (e.code === 'KeyF') {
         this.switchGhostZindex();
+        this.updateCellBorder(this.lastCell);
       }
     });
   }
@@ -55,9 +111,7 @@ export class BoardView {
   }
   setGhostZindex(zindex) {
     this.ghostZindex = zindex;
-    if (this.cardGhost && this.cardGhost.parentElement.className == 'cell') {
-      this.cardGhost.parentElement.style.zIndex = 500 + zindex;
-    }
+    this.cardGhost.style.zIndex = 500 + zindex;
   }
 
   createBoard() {
@@ -71,8 +125,17 @@ export class BoardView {
     }
 
     this.rootElement.innerHTML = `
-      <div class="board">\n${cells.join('\n')}\n</div>
+      <div class="board">d\n${cells.join('\n')}\n</div>
     `;
+  }
+
+  updateCellBorder(cell) {
+    if (cell && !cell.hasChildNodes() && this.currentPlayer == this.client.playerID) {
+      const validation = Rules.validateMove(this.client.getState().G, this.client.getState().ctx, cell.dataset.id, this.ghostZindex, this.selectedCard);
+      const color = validation.success ? '#333' : 'red'
+      cell.style.border = `dashed 1px ${color}`;
+      this.lastCell = cell;
+    }
   }
 
   attachListeners() {
@@ -80,32 +143,57 @@ export class BoardView {
       if (!this.hasPanned && this.selectedCard) {
         const id = parseInt(event.target.dataset.id);
         updateCardRotationsOnServer(this.client);
-        this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
-        this.ghostZindex = 1 + Math.abs(this.ghostZindex);
+        if (this.currentPlayer == this.client.playerID) {
+          const ret = this.client.moves.clickCell(id, this.ghostZindex, { ...this.selectedCard });
+          if (ret != INVALID_MOVE) {
+            this.setGhostVisible(false);
+            this.ghostZindex = 1 + Math.abs(this.ghostZindex);
+          }
+        } else {
+          toastRed('Não está na sua vez!');
+        }
       }
     };
 
+    this.rootElement.onmousemove = e => {
+      const transform = this.panzoom.getTransform();
+      let x = (e.clientX - transform.x) / transform.scale;
+      let y = (e.clientY - transform.y) / transform.scale;
+
+      this.cardGhost.style.left = `${x - CARD_WIDTH / 4}px`;
+      this.cardGhost.style.top = `${y - CARD_HEIGHT / 4}px`;
+    }
+
     const cells = this.rootElement.querySelectorAll('.cell');
+    let lastCell = undefined;
     cells.forEach(cell => {
       cell.onclick = handleCellClick;
 
-      // move ghost card to cell
+      // draw border
       cell.onmouseover = event => {
-        if (!cell.hasChildNodes()) {
-          cell.appendChild(this.cardGhost);
-          this.setGhostZindex(this.ghostZindex);
+        if (cell != this.lastCell) {
+          this.updateCellBorder(cell);
         }
       };
-    });
+      cell.onmouseout = event => {
+        cell.style.border = 'none';
+        this.lastCell = undefined;
+      }
 
-    const board = this.rootElement.querySelector('.board');
-    board.onmouseout = event => {
-      this.invisibleElem.innerHTML = '';
-      this.invisibleElem.appendChild(this.cardGhost);
-    };
+    });
   }
 
   update(state) {
+    this.currentPlayer = state.ctx.currentPlayer;
+
+    if (this.currentPlayer == this.client.playerID) {
+      this.setGhostVisible(true);
+      this.setGhostZindex(this.ghostZindex);
+      this.attachListeners();
+    } else {
+      this.setGhostVisible(false);
+    }
+
     // update board
     const cellElems = Array.from(document.querySelectorAll('.cell'));
     cellElems.forEach((cell, index) => {
@@ -139,17 +227,22 @@ export class BoardView {
   }
 
   onCardSelect(card) {
+    const didChangeCard = card != this.selectedCard && this.cardGhost;
     this.selectedCard = card;
+    this.cardGhost.style.transitionProperty = 'transform';
+
+    this.cardGhost.style.transitionDuration = didChangeCard ? '0ms' : '300ms';
+
     if (card) {
       const newSrc = this.deck.getCardImageElem(card.id).src;
       if (this.cardGhost.src !== newSrc) {
         this.cardGhost.src = newSrc;
       }
       this.cardGhost.style.transform = `rotate(${card.rotation * 90}deg)`;
-      this.setGhostVisible(true);
     } else {
       this.cardGhost.src = null;
-      this.setGhostVisible(false);
     }
+
+    this.updateCellBorder(this.lastCell);
   }
 }

@@ -20,7 +20,9 @@
     "esm": "^3.2.25",
     "koa-static": "^5.0.0",
     "panzoom": "^9.4.1",
-    "pg": "^8.5.1"
+    "pg": "^8.5.1",
+    "toastify-js": "^1.10.0",
+    "utils": "^0.3.1"
   },
   "devDependencies": {
     "@types/pg": "^7.14.11",
