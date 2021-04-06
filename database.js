@@ -5,6 +5,8 @@ const { DATABASE_USER, DATABASE_PASS, DATABASE_HOST, DATABASE_PORT, DATABASE_NAM
 
 const databaseUrl = `postgres://${DATABASE_USER}:${DATABASE_PASS}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`;
 
-const database = new PostgresStore(process.env.DATABASE_URL || databaseUrl);
+const database = new PostgresStore(process.env.DATABASE_URL || databaseUrl, {
+  ssl: true,
+});
 
 export { database };
