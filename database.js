@@ -7,6 +7,11 @@ const databaseUrl = `postgres://${DATABASE_USER}:${DATABASE_PASS}@${DATABASE_HOS
 
 const database = new PostgresStore(process.env.DATABASE_URL || databaseUrl, {
   ssl: true,
+  dialectOptions: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
 });
 
 export { database };
