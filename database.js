@@ -4,8 +4,10 @@ import { Sequelize } from 'sequelize';
 
 const { DATABASE_USER, DATABASE_PASS, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME } = process.env;
 
-let databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl && DATABASE_HOST) {
+let databaseUrl = undefined;
+if (process.env.DATABASE_URL) {
+  databaseUrl = process.env.DATABASE_URL;
+} else if (DATABASE_HOST) {
   databaseUrl = `postgres://${DATABASE_USER}:${DATABASE_PASS}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`;
 } else {
   databaseUrl = `postgres://${process.env.USER}:@localhost/`

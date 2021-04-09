@@ -45,8 +45,8 @@ export function SplashScreen(rootElement) {
     rootElement.appendChild(document.createElement('hr'));
     appendNewTag(rootElement, 'h1', 'Tipos de cartas');
 
-    const img = appendNewTag(rootElement, 'img');
-    img.src = image;
-    img.width = '561';
+    const p = appendNewTag(rootElement, 'p', 'Acesse o manual do Dominoops para aprender a <b>jogar</b>');
+    // img.src = image;
+    // img.width = '561';
   });
 }
