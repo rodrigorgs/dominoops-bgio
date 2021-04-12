@@ -43,10 +43,9 @@ export function SplashScreen(rootElement) {
     rootElement.appendChild(joinButton);
 
     rootElement.appendChild(document.createElement('hr'));
-    appendNewTag(rootElement, 'h1', 'Tipos de cartas');
+    appendNewTag(rootElement, 'h1', 'Manual');
 
-    const img = appendNewTag(rootElement, 'img');
-    img.src = image;
-    img.width = '561';
+    const p = appendNewTag(rootElement, 'p');
+    p.innerHTML = 'Acesse o <a href="https://rodrigorgs.github.io/dominoops/manual.html">manual do Dominoops</a> para aprender a jogar'
   });
 }
