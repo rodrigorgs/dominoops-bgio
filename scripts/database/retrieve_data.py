@@ -1,4 +1,5 @@
 from connect import Connect
+from game_data import GameData
 
 if __name__ == "__main__":
     connection = Connect()
@@ -6,7 +7,8 @@ if __name__ == "__main__":
     connection.connect()
 
     data = connection.query('SELECT * FROM "Games"')
+    # data = connection.query("SELECT * FROM pg_tables")
 
-    for piece in data[0]:
-        print(piece)
-        print()
+    for d in data:
+        g_data = GameData(d)
+        g_data.print_summary()
