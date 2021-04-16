@@ -66,7 +66,7 @@ export class MessageView {
         <span style="display: ${this.isPlayersTurn ? 'inline' : 'none'}">
           <span style="color: blue; font-weight: bold;">É sua vez!</span>
           <button id="drawCard" ${state.G.drawsLeft == 0 || state.G.movesLeft == 0 ? 'disabled' : ''}>Cavar carta</button>
-          <button id="endTurn" style="font-weight: ${state.G.movesLeft == 0 ? 'bold' : 'normal'}">Passar a vez</button>
+          <button id="endTurn" style="font-weight: ${state.G.movesLeft == 0 ? 'bold' : 'normal'}" ${state.G.drawsLeft == 0 || state.G.movesLeft == 0 || state.G.length == 0 ? '' : 'disabled'}>Passar a vez</button>
         </span>
         <span style="display: ${!this.isPlayersTurn ? 'inline' : 'none'}">
           <span style="color: red">Espere, está na vez do Player ${state.ctx.currentPlayer}.</span>
