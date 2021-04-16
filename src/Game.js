@@ -100,10 +100,10 @@ export const Game = {
             G.drawsLeft = DRAWS_LIMIT;
             toast('Você passou a vez');
             ctx.events.endTurn();
+        } else {
+            toast('É necessário cavar uma carta antes de passar a vez');
+            return INVALID_MOVE;
         }
-
-        toast('É necessário cavar uma carta antes de passar a vez');
-        return INVALID_MOVE;
     },
 
     drawCard: (G, ctx) => {
