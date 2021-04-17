@@ -94,11 +94,16 @@ export const Game = {
     },
 
     endTurn: (G, ctx) => {
-      G.movesLeft = MOVES_LIMIT;
-      G.drawsLeft = DRAWS_LIMIT;
-
-      toast('Você passou a vez');
-      ctx.events.endTurn();
+        //if the playes does not dug a card or deck is empty
+        if (G.drawsLeft == 0 || G.movesLeft == 0 || G.deck.length == 0) {
+            G.movesLeft = MOVES_LIMIT;
+            G.drawsLeft = DRAWS_LIMIT;
+            toast('Você passou a vez');
+            ctx.events.endTurn();
+        } else {
+            toast('É necessário cavar uma carta antes de passar a vez');
+            return INVALID_MOVE;
+        }
     },
 
     drawCard: (G, ctx) => {
