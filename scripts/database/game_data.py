@@ -1,3 +1,5 @@
+import csv
+
 from pprint import pprint
 
 
@@ -25,11 +27,11 @@ class GameData:
         for i, move in enumerate(self.moves):
             print()
             print(f'    Move {i}: ',)
-            pprint(move, indent=8, depth=2)
+            pprint(move, indent=8, depth=5)
         else:
             print()
 
         print(f'Duration: {self.duration}')
 
         print()
-        input()
+        # input()
