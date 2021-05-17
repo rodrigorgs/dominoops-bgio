@@ -20,7 +20,6 @@ class Connect:
     def connect(self):
         try:
             self.connection = psycopg2.connect(**self.credentials)
-            print(type(self.connection))
         except (psycopg2.DatabaseError) as error:
             print("Error connecting to database. {0}".format(error.args))
 

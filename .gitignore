@@ -120,3 +120,4 @@ dist
 # Scripts files
 scripts/**/*.ini
 scripts/**/__pycache__/
+scripts/**/csv/
