@@ -1,5 +1,5 @@
 import { Simulator } from './simulator';
-import { RandomPlayer } from './player';
+import { FreeEdgePlayer, RandomPlayer } from './player';
 
 import { parse } from 'ts-command-line-args';
 
@@ -27,7 +27,7 @@ for (let index = 0; index < args.matches!; index++) {
     const players = [];
 
     for (let playerIndex = 0; playerIndex < args.players!; playerIndex++) {
-        const player = new RandomPlayer(playerIndex.toString());
+        const player = new FreeEdgePlayer(playerIndex.toString());
         players.push(player);
     }
 

@@ -29,6 +29,7 @@ type GameResult = ResultData & {
 export abstract class Player {
     id: string;
     matchKey?: string;
+    type: string = '';
 
     client: _ClientImpl | null = null;
 
@@ -38,61 +39,7 @@ export abstract class Player {
         this.id = id;
     }
 
-    abstract play(turn: number, sideCards: number[]): number[];
-
     protected abstract selectMove(moves: MoveData[]): MoveData | null;
-
-    gameFinished(): GameResult {
-        const client = this.client;
-
-        if (!client) {
-            return {
-                draw: false,
-                finished: true,
-                message: 'error',
-            };
-        }
-
-        const { G, ctx } = client.getState()!;
-        const { deck } = G!;
-
-        const cards = getCurrentPlayerCards(G, ctx);
-
-        if (deck.length == 0) {
-            return {
-                draw: true,
-                finished: true,
-                message: 'deck out of cards',
-            };
-        }
-
-        if (cards.length == 0) {
-            return {
-                winner: this.id,
-                draw: false,
-                finished: true,
-                message: 'won game',
-            };
-        }
-
-        return {
-            draw: false,
-            finished: false,
-            message: 'game continues',
-        };
-    }
-
-    setClient(client: _ClientImpl): void {
-        this.client = client;
-    }
-
-    setMatchKey(key: string): void {
-        this.matchKey = key;
-    }
-}
-
-export class RandomPlayer extends Player {
-    type: string = 'RANDOM';
 
     play(turn: number, sideCards: number[]): number[] {
         if (!this.client) {
@@ -268,6 +215,58 @@ export class RandomPlayer extends Player {
         return possibleMoves;
     }
 
+    gameFinished(): GameResult {
+        const client = this.client;
+
+        if (!client) {
+            return {
+                draw: false,
+                finished: true,
+                message: 'error',
+            };
+        }
+
+        const { G, ctx } = client.getState()!;
+        const { deck } = G!;
+
+        const cards = getCurrentPlayerCards(G, ctx);
+
+        if (deck.length == 0) {
+            return {
+                draw: true,
+                finished: true,
+                message: 'deck out of cards',
+            };
+        }
+
+        if (cards.length == 0) {
+            return {
+                winner: this.id,
+                draw: false,
+                finished: true,
+                message: 'won game',
+            };
+        }
+
+        return {
+            draw: false,
+            finished: false,
+            message: 'game continues',
+        };
+    }
+
+    setClient(client: _ClientImpl): void {
+        this.client = client;
+    }
+
+    setMatchKey(key: string): void {
+        this.matchKey = key;
+    }
+}
+
+export class RandomPlayer extends Player {
+    type: string = 'RANDOM';
+
     protected selectMove(moves: MoveData[]): MoveData | null {
         if (!this.client) {
             return null;
@@ -289,5 +288,46 @@ export class RandomPlayer extends Player {
         const index = Math.floor(Math.random() * moves.length);
 
         return moves[index];
+    }
+}
+
+export class FreeEdgePlayer extends Player {
+    type: string = 'FREE_EDGE';
+
+    protected selectMove(moves: MoveData[]): MoveData | null {
+        if (!this.client) {
+            return null;
+        }
+
+        if (moves.length == 0) {
+            return null;
+        }
+
+        const { G } = this.client.getState()!;
+
+        let maxSideIndex = 0;
+        let selectedMove = null;
+
+        for (const move of moves) {
+            const sideIndexes = getSideIndexes(move.cellIndex);
+            let availableSides = 0;
+
+            for (const sideIndex of sideIndexes) {
+                if (
+                    Rules.verifyPosition(G, sideIndex) &&
+                    Rules.verifySideCards(G, sideIndex) &&
+                    Rules.verifyCardConnections(G, sideIndex)
+                ) {
+                    availableSides++;
+                }
+            }
+
+            if (availableSides > maxSideIndex) {
+                maxSideIndex = availableSides;
+                selectedMove = move;
+            }
+        }
+
+        return selectedMove;
     }
 }
