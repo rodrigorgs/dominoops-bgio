@@ -2,6 +2,8 @@
 
 ## Tasks
 
+-   [ ] Implement command line arguments
+
 -   [ ] Implement logic for calculating lead changes
 -   [ ] Implement saving data to some database instead of memory-only/print
 
