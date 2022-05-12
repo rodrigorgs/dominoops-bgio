@@ -3,7 +3,7 @@ import { RandomPlayer } from './player';
 
 const simulators = [];
 
-for (let index = 0; index < 1; index++) {
+for (let index = 0; index < 10000; index++) {
     const simulator = new Simulator([
         new RandomPlayer('0'),
         new RandomPlayer('1'),
@@ -11,8 +11,5 @@ for (let index = 0; index < 1; index++) {
     ]);
 
     simulators.push(simulator);
-}
-
-for (const simulator of simulators) {
     simulator.run();
 }

@@ -36,7 +36,7 @@ export class Simulator {
         this.fillSideCards();
     }
 
-    run(): void {
+    async run(): Promise<void> {
         Persistence.saveMatchData(this.matchKey, { seed: this.seed });
 
         let currentPlayer: Player = this.getCurrentPlayer();
