@@ -17,10 +17,19 @@ export type TurnData = {
     };
 
     possiblePlaysAmount: number;
+    cardsInHandAmount?: number;
 };
 
 export type ResultData = {
-    draw: boolean;
+    leadChangesAmount?: number;
+
+    turnsAmount?: number;
+    cardPickAmount?: number;
+    cardPlayAmount?: number;
+
+    totalPossiblePlaysAmount?: number;
+
+    draw?: boolean;
     winner?: string;
 };
 
@@ -45,16 +54,64 @@ export class Persistence {
         let data = this.getDataFrom(key);
         let oldTurnData = data.turns || [];
 
-        data = { ...data, turns: [...oldTurnData, turnData] };
+        data = {
+            ...data,
+            turns: [...oldTurnData, turnData],
+            result: this.applyTurnToResultData(key, turnData),
+        };
 
         this.setDataTo(key, data);
+    }
+
+    private static applyTurnToResultData(
+        key: string,
+        turnData: TurnData,
+    ): ResultData {
+        const data = this.getDataFrom(key);
+        const oldResultData: ResultData = data.result || {
+            leadChangesAmount: 0,
+            turnsAmount: 0,
+            cardPickAmount: 0,
+            cardPlayAmount: 0,
+            totalPossiblePlaysAmount: 0,
+        };
+
+        const resultData = {
+            ...oldResultData,
+            // leadChangesAmount: oldResultData.leadChangesAmount,
+            turnsAmount: oldResultData.turnsAmount! + 1,
+            cardPickAmount: turnData.pickedCard
+                ? oldResultData.cardPickAmount! + 1
+                : oldResultData.cardPickAmount!,
+            cardPlayAmount: turnData.played
+                ? oldResultData.cardPlayAmount! + 1
+                : oldResultData.cardPlayAmount!,
+            totalPossiblePlaysAmount:
+                oldResultData.totalPossiblePlaysAmount! +
+                turnData.possiblePlaysAmount!,
+        };
+
+        return resultData;
     }
 
     static saveResultData(
         key: string,
         winner: string = '',
         draw: boolean = false,
-    ): void {}
+    ): void {
+        let data = this.getDataFrom(key);
+        let oldResultData = data.result;
+
+        data = {
+            ...data,
+            result: {
+                ...oldResultData,
+                draw,
+                winner,
+            },
+        };
+        this.setDataTo(key, data);
+    }
 
     static print(key: string): void {
         console.log(this.allData[key].match);
