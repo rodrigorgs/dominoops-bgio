@@ -1,11 +1,15 @@
-import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client, LobbyClient } from 'boardgame.io/client';
 import { Game } from './Game';
-import { GAME_NAME, NUM_CARDS, CARD_WIDTH, CARD_HEIGHT, DECK_N_COLUMNS } from './config';
+import {
+  GAME_NAME,
+  NUM_CARDS,
+  CARD_WIDTH,
+  CARD_HEIGHT,
+  DECK_N_COLUMNS,
+} from './config';
 import { SplashScreen } from './SplashScreen';
 import { Deck } from './Deck';
 import { HandView } from './HandView';
-import createPanZoom from 'panzoom';
 import { BoardView } from './BoardView';
 import { MessageView } from './MessageView';
 
@@ -17,7 +21,8 @@ class App {
   constructor(rootElement, playerId, matchId, credentials) {
     this.client = Client({
       game: Game,
-      multiplayer: SocketIO({ server }),
+      // multiplayer: SocketIO({ server }),
+      numPlayers: 3,
       playerID: playerId,
       credentials: credentials,
       matchID: matchId,
@@ -27,10 +32,28 @@ class App {
 
     this.rootElement = rootElement;
 
-    this.deck = new Deck(document.getElementById('deck'), NUM_CARDS, CARD_WIDTH, CARD_HEIGHT, DECK_N_COLUMNS);
-    this.boardView = new BoardView(document.getElementById('app'), this.client, this.deck);
-    this.handView = new HandView(document.getElementById('hand'), this.client, this.deck, this.boardView.onCardSelect.bind(this.boardView));
-    this.messageView = new MessageView(document.getElementById('msg'), this.client);
+    this.deck = new Deck(
+      document.getElementById('deck'),
+      NUM_CARDS,
+      CARD_WIDTH,
+      CARD_HEIGHT,
+      DECK_N_COLUMNS,
+    );
+    this.boardView = new BoardView(
+      document.getElementById('app'),
+      this.client,
+      this.deck,
+    );
+    this.handView = new HandView(
+      document.getElementById('hand'),
+      this.client,
+      this.deck,
+      this.boardView.onCardSelect.bind(this.boardView),
+    );
+    this.messageView = new MessageView(
+      document.getElementById('msg'),
+      this.client,
+    );
   }
 
   restart(playerId, matchId, credentials) {
@@ -76,7 +99,9 @@ SplashScreen(appElement).then(async choice => {
     matchId = choice.room;
     let match = await lobbyClient.getMatch(GAME_NAME, matchId);
     console.log('players', match.players);
-    playerId = match.players.find(player => player.isConnected === undefined).id.toString();
+    playerId = match.players
+      .find(player => player.isConnected === undefined)
+      .id.toString();
     console.log('playerId', playerId);
     const res2 = await lobbyClient.joinMatch(GAME_NAME, matchId, {
       playerID: playerId,

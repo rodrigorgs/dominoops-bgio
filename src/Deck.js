@@ -4,6 +4,8 @@ export class Deck {
     this.imageData = Array(numCards);
     this.imageElems = Array(numCards);
 
+    if (!deckImgElem) return;
+
     const canvas = document.createElement('canvas');
     canvas.width = cardWidth;
     canvas.height = cardHeight;
@@ -14,7 +16,17 @@ export class Deck {
       const x = id % nCols;
       ctx.beginPath();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(deckImgElem, x * cardWidth, y * cardHeight, cardWidth, cardHeight, 0, 0, cardWidth, cardHeight);
+      ctx.drawImage(
+        deckImgElem,
+        x * cardWidth,
+        y * cardHeight,
+        cardWidth,
+        cardHeight,
+        0,
+        0,
+        cardWidth,
+        cardHeight,
+      );
       ctx.fill();
 
       const imageData = canvas.toDataURL('image/png');
