@@ -121,3 +121,6 @@ dist
 scripts/**/*.ini
 scripts/**/__pycache__/
 scripts/**/csv/
+
+**/csv/
+**/*.csv

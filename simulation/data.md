@@ -13,9 +13,17 @@
 -   [ ] Simulate matches
 
 -   [ ] Create more player types
+
     -   [x] Random
     -   [x] Choses move that keeps the greater amount of free positions to play
     -   [ ] Choses move that creates more possible moves for the next turn
+
+-   [ ] Put classes in separated files
+-   [ ] Make game run multiple times for all types of players implemented
+
+-   [ ] Rule changes
+    -   [ ] Number of cards for each player
+        -   [ ] Analyze the possibility of creating a larger deck based on the amount of cards for each player
 
 ## Info
 

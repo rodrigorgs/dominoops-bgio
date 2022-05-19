@@ -1,43 +1,10 @@
-export type MatchData = {
-    seed: string;
-};
-
-export type TurnData = {
-    playerId: string;
-    playerType: string;
-
-    played: boolean;
-    pickedCard: boolean;
-
-    playData?: {
-        cardId: number;
-        cellIndex: number;
-        rotation: number;
-        zIndex: number;
-    };
-
-    possiblePlaysAmount: number;
-    cardsInHandAmount?: number;
-};
-
-export type ResultData = {
-    leadChangesAmount?: number;
-
-    turnsAmount?: number;
-    cardPickAmount?: number;
-    cardPlayAmount?: number;
-
-    totalPossiblePlaysAmount?: number;
-
-    draw?: boolean;
-    winner?: string;
-};
-
-export type CombinedData = {
-    match: MatchData;
-    turns: TurnData[];
-    result: ResultData;
-};
+import { PersistanceCsv } from './persistance-csv';
+import {
+    MatchData,
+    TurnData,
+    ResultData,
+    CombinedData,
+} from './persistance-data';
 
 export class Persistence {
     static allData: {
@@ -111,6 +78,10 @@ export class Persistence {
             },
         };
         this.setDataTo(key, data);
+    }
+
+    static printCsv(key: string): void {
+        PersistanceCsv.generateCsvFromData(this.allData[key]);
     }
 
     static print(key: string): void {

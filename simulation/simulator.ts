@@ -56,7 +56,8 @@ export class Simulator {
             gameResult.draw,
         );
 
-        this.print();
+        // this.print();
+        Persistence.printCsv(this.matchKey);
         // Persistence.print(this.matchKey);
         // console.log(gameResult.message);
     }

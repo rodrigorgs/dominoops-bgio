@@ -29,8 +29,11 @@
     },
     "devDependencies": {
         "@types/jest": "^27.5.1",
+        "@types/npm": "^7.19.0",
         "@types/pg": "^7.14.11",
+        "fast-csv": "^4.3.6",
         "node-persist": "^3.1.0",
+        "npm": "^8.10.0",
         "parcel-bundler": "^1.12.4",
         "ts-command-line-args": "^2.3.1",
         "ts-jest": "^28.0.2"

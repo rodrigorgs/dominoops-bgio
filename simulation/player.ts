@@ -1,6 +1,7 @@
 import { _ClientImpl } from 'boardgame.io/dist/types/src/client/client';
 
-import { TurnData, Persistence, ResultData } from './persistance';
+import { Persistence } from './persistance';
+import { TurnData, ResultData } from './persistance-data';
 
 const { Rules } = require('../src/Rules');
 
@@ -93,12 +94,12 @@ export abstract class Player {
 
         if (selectedMove) {
             turnData.played = true;
-            turnData.playData = {
-                cardId: selectedMove.cardId,
-                rotation: selectedMove.rotation,
-                zIndex: selectedMove.zIndex,
-                cellIndex: selectedMove.cellIndex,
-            };
+
+            turnData.playedCardId = selectedMove.cardId;
+            turnData.playedRotation = selectedMove.rotation;
+            turnData.playedZIndex = selectedMove.zIndex;
+            turnData.playedCellIndex = selectedMove.cellIndex;
+
             turnData.possiblePlaysAmount = possibleMoves.length;
             turnData.cardsInHandAmount = cards.length - 1;
 
