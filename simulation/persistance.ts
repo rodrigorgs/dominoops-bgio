@@ -80,6 +80,10 @@ export class Persistence {
         this.setDataTo(key, data);
     }
 
+    static printSingleCsv(): void {
+        PersistanceCsv.generateSingleCsv(Object.values(this.allData));
+    }
+
     static printCsv(key: string): void {
         PersistanceCsv.generateCsvFromData(this.allData[key]);
     }

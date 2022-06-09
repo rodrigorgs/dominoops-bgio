@@ -16,17 +16,22 @@ type CsvReadyData = {
     ResultData;
 
 export class PersistanceCsv {
+    static generateSingleCsv(allCombinedData: CombinedData[]) {
+        const filePath = `${__dirname}/csv/test.csv`;
+        let csvData: CsvReadyData[] = [];
+
+        for (const combinedData of allCombinedData) {
+            csvData = [...csvData, ...this.prepareCsvData(combinedData)];
+        }
+
+        this.saveDataAsCsv(filePath, csvData);
+    }
+
     static generateCsvFromData(combinedData: CombinedData) {
-        const csvData = this.prepareCsvData(combinedData);
         const filePath = `${__dirname}/csv/${combinedData.match.seed}-${combinedData.turns[0].playerType}.csv`;
+        const csvData = this.prepareCsvData(combinedData);
 
-        // fs.writeFileSync(filePath, JSON.stringify(csvData));
-
-        const stream = fs.createWriteStream(filePath, {
-            flags: 'w',
-        });
-
-        write(csvData, { headers: true }).pipe(stream);
+        this.saveDataAsCsv(filePath, csvData);
     }
 
     static prepareCsvData(combinedData: CombinedData): CsvReadyData[] {
@@ -45,5 +50,13 @@ export class PersistanceCsv {
         }
 
         return csvData;
+    }
+
+    private static saveDataAsCsv(filePath: string, csvData: CsvReadyData[]) {
+        const stream = fs.createWriteStream(filePath, {
+            flags: 'w',
+        });
+
+        write(csvData, { headers: true }).pipe(stream);
     }
 }

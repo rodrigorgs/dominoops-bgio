@@ -3,6 +3,7 @@ import { FreeEdgePlayer, RandomPlayer } from './player';
 
 import { parse } from 'ts-command-line-args';
 import crypto from 'crypto';
+import { Persistence } from './persistance';
 
 interface ISimulatorArguments {
     players?: number;
@@ -28,6 +29,8 @@ let seed;
 let players;
 let simulator;
 
+const promises: Promise<any>[] = [];
+
 for (let index = 0; index < args.matches!; index++) {
     seed = crypto.randomBytes(16).toString('hex');
     players = [];
@@ -50,5 +53,10 @@ for (let index = 0; index < args.matches!; index++) {
 
     simulator = new Simulator(players, seed);
     simulators.push(simulator);
-    simulator.run();
+
+    promises.push(simulator.run());
 }
+
+Promise.all(promises).then(_ => {
+    Persistence.printSingleCsv();
+});
