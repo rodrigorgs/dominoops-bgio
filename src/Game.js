@@ -13,7 +13,7 @@ import {
     getCurrentPlayerSelectedCardIndex,
     setCurrentPlayerSelectedCardIndex,
 } from './utils';
-import { Rules } from './Rules';
+import { Rules } from './rules/RulesExporter';
 import { toast, toastRed } from './utils';
 
 import Toastify from 'toastify-js';

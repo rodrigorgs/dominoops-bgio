@@ -6,17 +6,17 @@
 
 -   [ ] Make ctx random work for players
 -   [ ] Implement logic for calculating lead changes
--   [ ] Implement saving data to some database instead of memory-only/print
+-   [x] Implement saving data to some database instead of memory-only/print
 
-    -   [ ] CSV
+    -   [x] CSV
 
--   [ ] Simulate matches
+-   [x] Simulate matches
 
 -   [ ] Create more player types
 
     -   [x] Random
     -   [x] Choses move that keeps the greater amount of free positions to play
-    -   [ ] Choses move that creates more possible moves for the next turn
+    -   [x] Choses move that creates more possible moves for the next turn
 
 -   [ ] Put classes in separated files
 -   [ ] Make game run multiple times for all types of players implemented

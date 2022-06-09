@@ -3,7 +3,7 @@ import { _ClientImpl } from 'boardgame.io/dist/types/src/client/client';
 import { Persistence } from './persistance';
 import { TurnData, ResultData } from './persistance-data';
 
-const { Rules } = require('../src/Rules');
+const { Rules } = require('../src/rules/RulesExporter');
 
 const { getCurrentPlayerCards, getSideIndexes } = require('../src/utils');
 

@@ -1,49 +1,21 @@
-import { CARD_SIDES, getSideIndexes } from './utils';
+// @ts-ignore
+import { CARD_SIDES, getSideIndexes } from '../utils';
 
-import { baseClasses } from './data/base-classes';
-import { baseObjects } from './data/base-objects';
+// @ts-ignore
+import { baseClasses } from '../data/base-classes';
+// @ts-ignore
+import { baseObjects } from '../data/base-objects';
 
-export const Rules = {
-    validateMove: (G, ctx, cellIndex, zIndex, card) => {
-        const verifyPositionResult = Rules.verifyPosition(G, cellIndex);
-        if (!verifyPositionResult.success) {
-            return verifyPositionResult;
-        }
+export abstract class RuleSet {
+    public static validateMove: (
+        G: any,
+        ctx: any,
+        cellIndex: any,
+        zIndex: any,
+        card: any,
+    ) => any;
 
-        const sideCardsResult = Rules.verifySideCards(G, cellIndex);
-        if (!sideCardsResult.success) {
-            return {
-                success: false,
-                error: sideCardsResult.error,
-            };
-        }
-
-        const CardConnectionsResult = Rules.verifyCardConnections(
-            G,
-            sideCardsResult.sideCell.position,
-        );
-        if (!CardConnectionsResult.success) {
-            return {
-                success: false,
-                error: CardConnectionsResult.error,
-            };
-        }
-
-        const verifyCardMatchResult = Rules.verifyCardMatch(
-            card,
-            zIndex,
-            sideCardsResult.sideCell,
-        );
-        if (!verifyCardMatchResult.success) {
-            return verifyCardMatchResult;
-        }
-
-        return {
-            success: true,
-        };
-    },
-
-    verifyPosition: (G, cellIndex) => {
+    static verifyPosition(G: any, cellIndex: any): any {
         const error = 'Já existe uma carta nessa posição!';
 
         if (G.cells[cellIndex] !== null) {
@@ -56,9 +28,9 @@ export const Rules = {
         return {
             success: true,
         };
-    },
+    }
 
-    getSideCells: (G, cellIndex) => {
+    static getSideCells(G: any, cellIndex: any): any {
         const { cells } = G;
 
         const sideCells = [];
@@ -78,9 +50,9 @@ export const Rules = {
         }
 
         return sideCells;
-    },
+    }
 
-    verifySideCards: (G, cellIndex) => {
+    static verifySideCards(G: any, cellIndex: any): any {
         const { cells } = G;
 
         const error = {
@@ -89,7 +61,7 @@ export const Rules = {
                 'Uma carta não pode se conectar a duas ou mais cartas!',
         };
 
-        const sideCells = Rules.getSideCells(G, cellIndex);
+        const sideCells = this.getSideCells(G, cellIndex);
 
         if (sideCells.length < 1) {
             return {
@@ -107,10 +79,10 @@ export const Rules = {
             success: true,
             sideCell: sideCells[0],
         };
-    },
+    }
 
-    verifyCardConnections: (G, cellIndex) => {
-        const sideCells = Rules.getSideCells(G, cellIndex);
+    static verifyCardConnections(G: any, cellIndex: any): any {
+        const sideCells = this.getSideCells(G, cellIndex);
 
         const error = 'A carta adjacente deve ser uma ponta';
 
@@ -124,10 +96,13 @@ export const Rules = {
         return {
             success: true,
         };
-    },
+    }
 
-    verifyPolymorphismMatch: (topClassName, bottomClassName) => {
-        let bottomClass = baseClasses.find(element => {
+    static verifyPolymorphismMatch(
+        topClassName: any,
+        bottomClassName: any,
+    ): any {
+        let bottomClass = baseClasses.find((element: any) => {
             return element.class === bottomClassName;
         });
 
@@ -136,16 +111,16 @@ export const Rules = {
                 return true;
             }
 
-            bottomClass = baseClasses.find(element => {
+            bottomClass = baseClasses.find((element: any) => {
                 return element.class === bottomClass.hierarchy;
             });
         }
 
         return false;
-    },
+    }
 
-    verifyCardMatch: (currentCard, zIndex, sideCell) => {
-        const error = (topSideVar, topSideClass, bottomCard) => {
+    static verifyCardMatch(currentCard: any, zIndex: any, sideCell: any): any {
+        const error = (topSideVar: any, topSideClass: any, bottomCard: any) => {
             const noAttributeMessage =
                 'Não existe atributo nesse lado da carta!';
 
@@ -162,9 +137,9 @@ export const Rules = {
         const currentCell = { ...currentCard };
         currentCell.card = baseObjects[currentCell.id];
 
-        let topCell = null;
-        let bottomCell = null;
-        let cellRelativePosition = 0;
+        let topCell: any = null;
+        let bottomCell: any = null;
+        let cellRelativePosition: any = 0;
 
         if (zIndex < sideCell.zIndex) {
             topCell = sideCell;
@@ -179,7 +154,7 @@ export const Rules = {
             cellRelativePosition = sideCell.side;
         }
 
-        const topCellClass = baseClasses.find(element => {
+        const topCellClass = baseClasses.find((element: any) => {
             return element.class === topCell.card.class;
         });
 
@@ -221,7 +196,7 @@ export const Rules = {
         // console.log(bottomCell.card);
 
         if (
-            !Rules.verifyPolymorphismMatch(
+            !this.verifyPolymorphismMatch(
                 topCardSideClass,
                 bottomCell.card.class,
             )
@@ -233,5 +208,5 @@ export const Rules = {
         }
 
         return { success: true };
-    },
-};
+    }
+}

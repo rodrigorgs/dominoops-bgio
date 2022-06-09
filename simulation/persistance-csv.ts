@@ -18,7 +18,7 @@ type CsvReadyData = {
 export class PersistanceCsv {
     static generateCsvFromData(combinedData: CombinedData) {
         const csvData = this.prepareCsvData(combinedData);
-        const filePath = `${__dirname}/csv/${combinedData.match.seed}.csv`;
+        const filePath = `${__dirname}/csv/${combinedData.match.seed}-${combinedData.turns[0].playerType}.csv`;
 
         // fs.writeFileSync(filePath, JSON.stringify(csvData));
 
