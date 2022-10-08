@@ -19,14 +19,6 @@ export type TurnData = {
 };
 
 export type ResultData = {
-    leadChangesAmount?: number;
-
-    turnsAmount?: number;
-    cardPickAmount?: number;
-    cardPlayAmount?: number;
-
-    totalPossiblePlaysAmount?: number;
-
     draw?: boolean;
     winner?: string;
 };
