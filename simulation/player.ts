@@ -2,6 +2,10 @@ import { _ClientImpl } from 'boardgame.io/dist/types/src/client/client';
 
 import { Persistence } from './persistance';
 import { TurnData, ResultData } from './persistance-data';
+import { GameResult, MoveData } from './game-data';
+
+import { Mcts } from './mcts';
+import { retrieveAllPossibleMoves } from './moves';
 
 const { Rules } = require('../src/rules/RulesExporter');
 
@@ -11,20 +15,6 @@ const moveNames = {
     draw: 'drawCard',
     playCard: 'clickCell',
     endTurn: 'endTurn',
-};
-
-type MoveData = {
-    card: any;
-    cardId: number;
-    rotation: number;
-    zIndex: number;
-    cellIndex: number;
-    sideCardIndex: number;
-};
-
-type GameResult = ResultData & {
-    finished: boolean;
-    message?: string;
 };
 
 export abstract class Player {
@@ -65,12 +55,7 @@ export abstract class Player {
         const zIndex = turn + 2;
 
         let cards = getCurrentPlayerCards(G, ctx);
-        const possibleMoves = this.retrieveAllPossibleMoves(
-            cards,
-            sideCards,
-            zIndex,
-        );
-
+        const possibleMoves = this.getMoves(G, cards, sideCards, zIndex, ctx.currentPlayer)
         if (possibleMoves.length == 0) {
             moves[moveNames.draw]();
 
@@ -81,7 +66,7 @@ export abstract class Player {
             const card = cards[index];
 
             possibleMoves.push(
-                ...this.retrieveAllPossibleMoves([card], sideCards, zIndex),
+                ...this.getMoves(G, [card], sideCards, zIndex, ctx.currentPlayer),
             );
 
             turnData.pickedCard = true;
@@ -119,101 +104,13 @@ export abstract class Player {
         return newSideCards;
     }
 
-    private retrieveAllPossibleMoves(
-        cards: any[],
-        sideCards: any[],
-        zIndex: number,
-    ) {
-        const possibleMoves: MoveData[] = [];
-
-        for (const card of cards) {
-            for (
-                let sideCardIndex = 0;
-                sideCardIndex < sideCards.length;
-                sideCardIndex++
-            ) {
-                const sideCard = sideCards[sideCardIndex];
-                possibleMoves.push(
-                    ...this.retrieveCardPossibleMoves(
-                        card,
-                        sideCard,
-                        sideCardIndex,
-                        zIndex,
-                    ),
-                );
-            }
-        }
-
-        return possibleMoves;
-    }
-
-    private retrieveCardPossibleMoves(
-        card: any,
-        sideCard: any,
-        sideCardIndex: number,
-        zIndex: number,
-    ): MoveData[] {
-        const possibleMoves: MoveData[] = [];
-
-        for (const cell of getSideIndexes(sideCard)) {
-            possibleMoves.push(
-                ...this.retrieveCardPossibleMoveRotations(
-                    cell,
-                    zIndex,
-                    card,
-                    sideCardIndex,
-                ),
-            );
-
-            possibleMoves.push(
-                ...this.retrieveCardPossibleMoveRotations(
-                    cell,
-                    -zIndex,
-                    card,
-                    sideCardIndex,
-                ),
-            );
-        }
-
-        return possibleMoves;
-    }
-
-    private retrieveCardPossibleMoveRotations(
-        cell: any,
-        zIndex: any,
-        card: any,
-        sideCardIndex: number,
-    ): MoveData[] {
-        if (!this.client) {
-            return [];
-        }
-
-        const possibleMoves: MoveData[] = [];
-        const { G, ctx } = this.client.getState()!;
-
-        for (let rotation = 1; rotation <= 4; rotation++) {
-            const simulatedCard = { ...card, rotation };
-            const result = Rules.validateMove(
-                G,
-                ctx,
-                cell.position,
-                zIndex,
-                simulatedCard,
-            );
-
-            if (result.success == true) {
-                possibleMoves.push({
-                    card: simulatedCard,
-                    cardId: simulatedCard.id,
-                    rotation,
-                    zIndex,
-                    cellIndex: cell.position,
-                    sideCardIndex,
-                });
-            }
-        }
-
-        return possibleMoves;
+    getMoves(G: any, cards: any, sideCards: any, zIndex: any, currentPlayer: any): MoveData[] {
+        return retrieveAllPossibleMoves(
+            G.cells,
+            cards,
+            sideCards,
+            zIndex,
+        );
     }
 
     gameFinished(): GameResult {
@@ -315,9 +212,50 @@ export class FreeEdgePlayer extends Player {
 
             for (const sideIndex of sideIndexes) {
                 if (
-                    Rules.verifyPosition(G, sideIndex) &&
-                    Rules.verifySideCards(G, sideIndex) &&
-                    Rules.verifyCardConnections(G, sideIndex)
+                    Rules.verifyPosition(G.cells, sideIndex) &&
+                    Rules.verifySideCards(G.cells, sideIndex) &&
+                Rules.verifyCardConnections(G.cells, sideIndex)
+                ) {
+                    availableSides++;
+                }
+            }
+
+            if (availableSides > maxSideIndex) {
+                maxSideIndex = availableSides;
+                selectedMove = move;
+            }
+        }
+
+        return selectedMove;
+    }
+}
+
+export class MctsPlayer extends Player {
+    type: string = 'MCTS';
+
+    getMoves(G: any, cards: any, sideCards: any, zIndex: any, currentPlayer: any): MoveData[] {
+        const mcts = new Mcts(G, currentPlayer, sideCards, zIndex, currentPlayer);
+        return mcts.getBestMove();
+    }
+
+    protected selectMove(moves: MoveData[]): MoveData | null {
+        if (!this.client) return null;
+        if (moves.length == 0) return null;
+
+        const { G } = this.client.getState()!;
+
+        let maxSideIndex = 0;
+        let selectedMove = null;
+
+        for (const move of moves) {
+            const sideIndexes = getSideIndexes(move.cellIndex);
+            let availableSides = 0;
+
+            for (const sideIndex of sideIndexes) {
+                if (
+                    Rules.verifyPosition(G.cells, sideIndex) &&
+                    Rules.verifySideCards(G.cells, sideIndex) &&
+                Rules.verifyCardConnections(G.cells, sideIndex)
                 ) {
                     availableSides++;
                 }

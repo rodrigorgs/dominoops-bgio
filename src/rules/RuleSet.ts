@@ -8,17 +8,16 @@ import { baseObjects } from '../data/base-objects';
 
 export abstract class RuleSet {
     public static validateMove: (
-        G: any,
-        ctx: any,
+        cells: any,
         cellIndex: any,
         zIndex: any,
         card: any,
     ) => any;
 
-    static verifyPosition(G: any, cellIndex: any): any {
+    static verifyPosition(cells: any, cellIndex: any): any {
         const error = 'Já existe uma carta nessa posição!';
 
-        if (G.cells[cellIndex] !== null) {
+        if (cells[cellIndex] !== null) {
             return {
                 success: false,
                 error: error,
@@ -30,9 +29,7 @@ export abstract class RuleSet {
         };
     }
 
-    static getSideCells(G: any, cellIndex: any): any {
-        const { cells } = G;
-
+    static getSideCells(cells: any, cellIndex: any): any {
         const sideCells = [];
         const sideIndexes = getSideIndexes(cellIndex);
 
@@ -52,16 +49,14 @@ export abstract class RuleSet {
         return sideCells;
     }
 
-    static verifySideCards(G: any, cellIndex: any): any {
-        const { cells } = G;
-
+    static verifySideCards(cells: any, cellIndex: any): any {
         const error = {
             noCards: 'Não existem cartas adjacentes nessa posição!',
             multipleCards:
                 'Uma carta não pode se conectar a duas ou mais cartas!',
         };
 
-        const sideCells = this.getSideCells(G, cellIndex);
+        const sideCells = this.getSideCells(cells, cellIndex);
 
         if (sideCells.length < 1) {
             return {
@@ -81,8 +76,8 @@ export abstract class RuleSet {
         };
     }
 
-    static verifyCardConnections(G: any, cellIndex: any): any {
-        const sideCells = this.getSideCells(G, cellIndex);
+    static verifyCardConnections(cells: any, cellIndex: any): any {
+        const sideCells = this.getSideCells(cells, cellIndex);
 
         const error = 'A carta adjacente deve ser uma ponta';
 

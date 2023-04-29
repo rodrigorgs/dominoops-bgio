@@ -2,7 +2,7 @@ import { Client } from 'boardgame.io/client';
 import { _ClientImpl } from 'boardgame.io/dist/types/src/client/client';
 import { Local } from 'boardgame.io/multiplayer';
 
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 import { Persistence } from './persistance';
 import { Player } from './player';
@@ -55,11 +55,6 @@ export class Simulator {
             gameResult.winner,
             gameResult.draw,
         );
-
-        // this.print();
-        // Persistence.printCsv(this.matchKey);
-        // Persistence.print(this.matchKey);
-        // console.log(gameResult.message);
     }
 
     print(): void {

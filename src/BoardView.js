@@ -140,8 +140,7 @@ export class BoardView {
             this.currentPlayer == this.client.playerID
         ) {
             const validation = Rules.validateMove(
-                this.client.getState().G,
-                this.client.getState().ctx,
+                this.client.getState().G.cells,
                 cell.dataset.id,
                 this.ghostZindex,
                 this.selectedCard,

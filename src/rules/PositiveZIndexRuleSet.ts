@@ -2,18 +2,17 @@ import { RuleSet } from './RuleSet';
 
 export class PositiveZIndexRuleSet extends RuleSet {
     public static validateMove(
-        G: any,
-        ctx: any,
+        cells: any,
         cellIndex: any,
         zIndex: any,
         card: any,
     ): any {
-        const verifyPositionResult = PositiveZIndexRuleSet.verifyPosition(G, cellIndex);
+        const verifyPositionResult = PositiveZIndexRuleSet.verifyPosition(cells, cellIndex);
         if (!verifyPositionResult.success) {
             return verifyPositionResult;
         }
 
-        const sideCardsResult = PositiveZIndexRuleSet.verifySideCards(G, cellIndex);
+        const sideCardsResult = PositiveZIndexRuleSet.verifySideCards(cells, cellIndex);
         if (!sideCardsResult.success) {
             return {
                 success: false,
@@ -22,7 +21,7 @@ export class PositiveZIndexRuleSet extends RuleSet {
         }
 
         const CardConnectionsResult = PositiveZIndexRuleSet.verifyCardConnections(
-            G,
+            cells,
             sideCardsResult.sideCell.position,
         );
         if (!CardConnectionsResult.success) {

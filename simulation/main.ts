@@ -1,5 +1,5 @@
 import { Simulator } from './simulator';
-import { FreeEdgePlayer, RandomPlayer } from './player';
+import { FreeEdgePlayer, MctsPlayer, RandomPlayer } from './player';
 
 import { parse } from 'ts-command-line-args';
 import crypto from 'crypto';
@@ -47,7 +47,7 @@ for (let index = 0; index < args.matches!; index++) {
     players = [];
 
     for (let playerIndex = 0; playerIndex < args.players!; playerIndex++) {
-        const player = new FreeEdgePlayer(playerIndex.toString());
+        const player = new MctsPlayer(playerIndex.toString());
         players.push(player);
     }
 

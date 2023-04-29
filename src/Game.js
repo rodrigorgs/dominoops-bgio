@@ -74,7 +74,7 @@ export const Game = {
                 return INVALID_MOVE;
             }
 
-            const result = Rules.validateMove(G, ctx, cellIndex, zIndex, card);
+            const result = Rules.validateMove(G.cells, cellIndex, zIndex, card);
 
             if (!result.success) {
                 toastRed(result.error);
