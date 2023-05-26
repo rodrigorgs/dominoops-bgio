@@ -46,8 +46,8 @@ export class Simulator {
             this.sideCards = currentPlayer.play(this.turn, this.sideCards);
             this.startNextTurn();
 
-            currentPlayer = this.getCurrentPlayer();
             gameResult = currentPlayer.gameFinished();
+            currentPlayer = this.getCurrentPlayer();
         }
 
         Persistence.saveResultData(
